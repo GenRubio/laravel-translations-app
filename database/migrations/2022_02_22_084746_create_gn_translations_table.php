@@ -15,7 +15,8 @@ class CreateGnTranslationsTable extends Migration
     {
         Schema::create('gn_translations', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('section_id')->nullable();
+            $table->unsignedBigInteger('gn_section_id')->nullable();
+            $table->unsignedBigInteger('gn_lang_file_id')->nullable();
             $table->string('key')->unique();
             $table->string('format_key');
             $table->text('value');

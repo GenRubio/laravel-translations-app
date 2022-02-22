@@ -4,7 +4,8 @@
 <li class="nav-item nav-dropdown">
     <a class="nav-link nav-dropdown-toggle" href="#"><i class="las la-language"></i> Translations</a>
     <ul class="nav-dropdown-items">
-        <li class='nav-item'><a class='nav-link' href='{{ backpack_url('gn-translation') }}'><i class="las la-file-alt"></i> Texts</a></li>
-        <li class='nav-item'><a class='nav-link' href='{{ backpack_url('gn-section') }}'><i class="las la-list"></i> Sections</a></li>
+        <li class='nav-item'><a class='nav-link' href='{{ backpack_url('gn-lang-file') }}'><i class="lar la-file-alt"></i> Lang Files</a></li>
+        <li class='nav-item'><a class='nav-link' href='{{ backpack_url('gn-section') }}'><i class="las la-list"></i> Lang Sections</a></li>
+        <li class='nav-item'><a class='nav-link' href='{{ backpack_url('gn-translation') }}'><i class="las la-language"></i> Lang Texts</a></li>
     </ul>
 </li>

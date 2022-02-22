@@ -53,6 +53,10 @@ class GnSectionCrudController extends CrudController
                     'type' => 'text',
                     'label' => 'Section <br> <small>Auto format: input = Hello Word | result = hello_word</small>'
                 ],
+                [
+                    'name' => 'format_section',
+                    'type' => 'hidden',
+                ]
             ]
         );
     }

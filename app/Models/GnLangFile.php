@@ -2,14 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
-use Backpack\CRUD\app\Models\Traits\SpatieTranslatable\HasTranslations;
+use Illuminate\Database\Eloquent\Model;
 
-class GnTranslation extends Model
+class GnLangFile extends Model
 {
     use CrudTrait;
-    use HasTranslations;
 
     /*
     |--------------------------------------------------------------------------
@@ -17,23 +15,16 @@ class GnTranslation extends Model
     |--------------------------------------------------------------------------
     */
 
-    protected $table = 'gn_translations';
-    protected $primaryKey = 'id';
+    protected $table = 'gn_lang_files';
+    // protected $primaryKey = 'id';
     // public $timestamps = false;
     protected $guarded = ['id'];
     protected $fillable = [
-        'key',
-        'format_key',
-        'value',
-        'gn_section_id',
-        'gn_lang_file_id'
+        'name',
+        'format_name'
     ];
     // protected $hidden = [];
     // protected $dates = [];
-
-    protected $translatable = [
-        'value'
-    ];
 
     /*
     |--------------------------------------------------------------------------
@@ -47,15 +38,6 @@ class GnTranslation extends Model
     |--------------------------------------------------------------------------
     */
 
-    public function section()
-    {
-        return $this->hasOne(GnSection::class, 'id', 'gn_section_id');
-    }
-
-    public function file(){
-        return $this->hasOne(GnLangFile::class, 'id', 'gn_lang_file_id');
-    }
-
     /*
     |--------------------------------------------------------------------------
     | SCOPES
@@ -68,19 +50,14 @@ class GnTranslation extends Model
     |--------------------------------------------------------------------------
     */
 
-    public function getHelperAttribute(){
-        $route = ($this->file ? $this->file->format_name . '.' : "") . ($this->section ? $this->section->format_section . '.' : "") . $this->attributes['format_key'];
-        return "trans('" . $route . "')";
-    }
-
     /*
     |--------------------------------------------------------------------------
     | MUTATORS
     |--------------------------------------------------------------------------
     */
 
-    public function setFormatKeyAttribute()
+    public function setFormatNameAttribute()
     {
-        $this->attributes['format_key'] = strtolower(str_replace(" ", "_", $this->attributes['key']));
+        $this->attributes['format_name'] = strtolower(str_replace(" ", "_", $this->attributes['name']));
     }
 }
