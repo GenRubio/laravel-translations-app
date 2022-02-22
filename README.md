@@ -1,64 +1,68 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# Laravel translations
+Sistema de traducciones para proyectos en Laravel con BackpackForLaravel.
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Funcionamiento 
+El sistema está compuesto por 2 modelos GnSection y GnTranslation:
 
-## About Laravel
+- GnSection: se usa para especificar la sección a la cual pertenece una traducción.
+- GnTranslation: Contiene el identificador y el valor de la traducción.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Al crear, eliminar o actualizar una GnTranslation se nos crearan las carpetas de los lenguajes que utiliza nuestra aplicación en la carpeta lang 
+del resource en el caso de que no existan.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Dentro de las carpetas se creará nuestro archivo trans.php que se sobreescribirá al hacer cambio en algún GnTranslation.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Para cada lenguaje se crea un archivo con diferente contenido basándose en la traducción del campo value de cada GnTranslation.
 
-## Learning Laravel
+## Archivos usados. Para migrar "Laravel translations" a otro proyecto
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- database/migrations
+```sh
+2022_02_21_052106_create_gn_sections_table.php
+2022_02_22_084746_create_gn_translations_table.php
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- app/Http/Controllers/Admin
+```sh
+GnSectionCrudController.php
+GnTranslationCrudController.php
+```
 
-## Laravel Sponsors
+- app/Http/Requests
+```sh
+GnSectionRequest.php
+GnTranslationRequest.php
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+- app/Models
+```sh
+GnSection.php
+GnTranslation.php
+```
 
-### Premium Partners
+- resources/views/vendor/base/inc/sidebar_content.blade.php
+```sh
+<li class="nav-item nav-dropdown">
+    <a class="nav-link nav-dropdown-toggle" href="#"><i class="las la-language"></i> Translations</a>
+    <ul class="nav-dropdown-items">
+        <li class='nav-item'><a class='nav-link' href='{{ backpack_url('gn-translation') }}'><i class="las la-file-alt"></i> Texts</a></li>
+        <li class='nav-item'><a class='nav-link' href='{{ backpack_url('gn-section') }}'><i class="las la-list"></i> Sections</a></li>
+    </ul>
+</li>
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+- routes/backpack/custom.php
+```sh
+Route::prefix('gn-translation')->group(function () {
+    Route::crud('/', 'GnTranslationCrudController');
+    Route::get('/make-translations-file', 'GnTranslationCrudController@makeTransletableFile');
+});
+Route::crud('gn-section', 'GnSectionCrudController');
+```
 
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
+Una vez copiados los archivos a otro proyecto ejecutamos el comando:
+```sh
+php artisan migrate
+```
 ## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+© Copyright 20022-2099 Copyright.es - Todos los Derechos Reservados
