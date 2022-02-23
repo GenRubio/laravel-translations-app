@@ -2,11 +2,13 @@
 
 return [
 
-  'test' => 'hola',
-  'calculator_hands' => 'asf',
+  'title' => 'Hola mundo',
   'modal' => [
    'title' => 'hola mundo',
-   'subtitle' => 'hola potato',
+  ],
+  'modal_2' => [
+   'title' => 'hola mundo',
+   'subtitle' => 'test hola',
   ],
 
 ];

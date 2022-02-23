@@ -12,7 +12,9 @@ class GnLangFileCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
+    use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation {
+        destroy as traitDestroy;
+    }
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
 
     public function setup()
@@ -78,31 +80,28 @@ class GnLangFileCrudController extends CrudController
         );
     }
 
-    public function importFiles(){
-        $gnFiles = $this->getAllGnLangFiles();
-        $this->makeLaguagesDirectories();
-    }
-
-    private function makeLaguagesDirectories()
+    public function destroy($id)
     {
-        $folder = resource_path('lang');
-        foreach ($this->getLanguages() as $lang) {
-            $path = $folder . '/' . $lang;
-            if (!is_dir($path)) {
-                mkdir($path, 0755, true);
+        $this->crud->hasAccessOrFail('delete');
+        $langFile = $this->getGnLangFileById($id);
+
+        if ($langFile) {
+            if (count($langFile->translations)) {
+                return \Alert::error('La archivo tiene traducciones asignadas.');
             }
+        } else {
+            return \Alert::error('Ha ocurido un error.');
         }
+
+        return $this->crud->delete($id);
     }
 
-    private function getAllGnLangFiles(){
-        return GnLangFile::all();
+    private function getGnLangFileById($id){
+        return GnLangFile::find($id);
     }
 
-    private function getLanguages()
-    {
-        /**
-         * Hacer la consulta a la tabla de lenguajes del proyecto devolver en array los lenguajes
-         */
-        return ['es', 'en', 'ru'];
+    public function importFiles(){
+        #$gnFiles = $this->getAllGnLangFiles();
+        #$this->makeLaguagesDirectories();
     }
 }

@@ -57,11 +57,6 @@ class GnTranslationCrudController extends CrudController
                     'label' => 'Format key'
                 ],
                 [
-                    'name' => 'key',
-                    'type' => 'text',
-                    'label' => 'Key'
-                ],
-                [
                     'name' => 'value',
                     'type' => 'text',
                     'label' => 'Value'
@@ -70,6 +65,38 @@ class GnTranslationCrudController extends CrudController
         );
 
         $this->crud->addButtonFromView('top', 'make-transletable-file', 'make-transletable-file', 'end');
+        $this->setFilters();
+    }
+
+    private function setFilters()
+    {
+        $this->crud->addFilter([
+            'name' => 'gn_lang_file_id',
+            'type' => 'select2',
+            'label' => 'Lang File',
+        ], function () {
+            $data = [];
+            foreach ($this->getAllLangFiles() as $file) {
+                $data[$file->id] = $file->name;
+            }
+            return $data;
+        }, function ($value) {
+            $this->crud->addClause('where', 'gn_lang_file_id', $value);
+        });
+
+        $this->crud->addFilter([
+            'name' => 'gn_section_id',
+            'type' => 'select2',
+            'label' => 'Lang Section',
+        ], function () {
+            $data = [];
+            foreach ($this->getAllSections() as $section) {
+                $data[$section->id] = $section->section;
+            }
+            return $data;
+        }, function ($value) {
+            $this->crud->addClause('where', 'gn_section_id', $value);
+        });
     }
 
     protected function setupCreateOperation()
@@ -146,9 +173,29 @@ class GnTranslationCrudController extends CrudController
 
     public function store()
     {
-        $response = $this->traitStore();
-        $this->makeLaguagesDirectories();
-        return $response;
+        if ($this->keyInUse()) {
+            return redirect()->back()->withErrors(['error' => "Esta key ya esta en uso."]);
+        } else {
+            $response = $this->traitStore();
+            $this->makeLaguagesDirectories();
+            return $response;
+        }
+    }
+
+    private function keyInUse()
+    {
+        $key = $this->crud->getRequest()->get('key');
+        $langFile = $this->crud->getRequest()->get('gn_lang_file_id');
+        $section = $this->crud->getRequest()->get('gn_section_id');
+        return $this->getTranslationByParameters($key, $langFile, $section) ? true : false;
+    }
+
+    private function getTranslationByParameters($key, $langFile, $section)
+    {
+        return GnTranslation::where('key', $key)
+            ->where('gn_lang_file_id', $langFile)
+            ->where('gn_section_id', $section)
+            ->first();
     }
 
     public function update()
@@ -242,8 +289,9 @@ class GnTranslationCrudController extends CrudController
         return str_replace("'", "\'", $value);
     }
 
-    private function getTranslationsBySection($translations, $section){
-        return $translations->filter(function($item) use ($section) {
+    private function getTranslationsBySection($translations, $section)
+    {
+        return $translations->filter(function ($item) use ($section) {
             return $item->gn_section_id == $section;
         })->all();
     }
@@ -251,6 +299,10 @@ class GnTranslationCrudController extends CrudController
     private function getAllLangFiles()
     {
         return GnLangFile::all();
+    }
+
+    private function getAllSections(){
+        return GnSection::all();
     }
 
     private function getLaguageFileTexts($languagesFile)
@@ -263,7 +315,8 @@ class GnTranslationCrudController extends CrudController
         return GnTranslation::where('gn_lang_file_id', $languagesFile->id)->pluck('gn_section_id')->toArray();
     }
 
-    private function getSectionsByIds($ids){
+    private function getSectionsByIds($ids)
+    {
         return GnSection::whereIn('id', $ids)->get();
     }
 

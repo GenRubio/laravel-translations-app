@@ -38,6 +38,10 @@ class GnLangFile extends Model
     |--------------------------------------------------------------------------
     */
 
+    public function translations(){
+        return $this->hasMany(GnTranslation::class, 'gn_lang_file_id', 'id');
+    }
+
     /*
     |--------------------------------------------------------------------------
     | SCOPES

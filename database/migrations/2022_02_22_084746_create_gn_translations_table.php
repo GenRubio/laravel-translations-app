@@ -17,7 +17,7 @@ class CreateGnTranslationsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('gn_section_id')->nullable();
             $table->unsignedBigInteger('gn_lang_file_id')->nullable();
-            $table->string('key')->unique();
+            $table->string('key');
             $table->string('format_key');
             $table->text('value');
             $table->timestamps();
