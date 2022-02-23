@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Backpack\CRUD\app\Models\Traits\SpatieTranslatable\HasTranslations;
+use Illuminate\Support\Str;
 
 class GnTranslation extends Model
 {
@@ -81,6 +82,6 @@ class GnTranslation extends Model
 
     public function setFormatKeyAttribute()
     {
-        $this->attributes['format_key'] = strtolower(str_replace(" ", "_", $this->attributes['key']));
+        $this->attributes['format_key'] = Str::slug($this->attributes['key'], '_');
     }
 }

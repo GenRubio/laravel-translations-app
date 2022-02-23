@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class GnSection extends Model
 {
@@ -39,7 +40,7 @@ class GnSection extends Model
     */
 
     public function translations(){
-        return $this->hasMany(GnTranslation::class, 'section_id', 'id');
+        return $this->hasMany(GnTranslation::class, 'gn_section_id', 'id');
     }
 
     /*
@@ -62,6 +63,6 @@ class GnSection extends Model
 
     public function setFormatSectionAttribute()
     {
-        $this->attributes['format_section'] = strtolower(str_replace(" ", "_", $this->attributes['section']));
+        $this->attributes['format_section'] = Str::slug($this->attributes['section'], '_');
     }
 }

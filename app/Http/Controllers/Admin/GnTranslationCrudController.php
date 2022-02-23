@@ -301,7 +301,8 @@ class GnTranslationCrudController extends CrudController
         return GnLangFile::all();
     }
 
-    private function getAllSections(){
+    private function getAllSections()
+    {
         return GnSection::all();
     }
 

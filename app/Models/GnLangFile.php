@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class GnLangFile extends Model
 {
@@ -62,6 +63,6 @@ class GnLangFile extends Model
 
     public function setFormatNameAttribute()
     {
-        $this->attributes['format_name'] = strtolower(str_replace(" ", "_", $this->attributes['name']));
+        $this->attributes['format_name'] = Str::slug($this->attributes['name'], '_');
     }
 }
