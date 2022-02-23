@@ -21,6 +21,9 @@ class GnTranslationCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation {
         destroy as traitDestroy;
     }
+    use \Backpack\CRUD\app\Http\Controllers\Operations\BulkDeleteOperation {
+        bulkDelete as traitBulkDelete;
+    }
 
     public function setup()
     {
@@ -33,6 +36,32 @@ class GnTranslationCrudController extends CrudController
     {
         $this->crud->setColumns(
             [
+                [
+                    'type'            => 'custom_html',
+                    'name'            => 'blank_first_column',
+                    'label'           => ' ',
+                    'priority'        => 0,
+                    'searchLogic'     => false,
+                    'orderable'       => false,
+                    'visibleInTabel'  => true,
+                    'visibleInModal'  => false,
+                    'visibleInExport' => false,
+                    'visibleInShow'   => false,
+                    'hasActions'      => true,
+                ],
+                [
+                    'type'            => 'checkbox',
+                    'name'            => 'bulk_actions',
+                    'label'           => ' <input type="checkbox" class="crud_bulk_actions_main_checkbox" style="width: 16px; height: 16px;" />',
+                    'priority'        => 0,
+                    'searchLogic'     => false,
+                    'orderable'       => false,
+                    'visibleInTable'  => true,
+                    'visibleInModal'  => false,
+                    'visibleInExport' => false,
+                    'visibleInShow'   => false,
+                    'hasActions'      => true,
+                ],
                 [
                     'name' => 'helper',
                     'type' => 'text',
@@ -68,7 +97,8 @@ class GnTranslationCrudController extends CrudController
         $this->crud->addButtonFromView('top', 'make-transletable-file', 'make-transletable-file', 'end');
     }
 
-    private function setShowNumberRows(){
+    private function setShowNumberRows()
+    {
         $this->crud->setDefaultPageLength(100);
     }
 
@@ -215,6 +245,23 @@ class GnTranslationCrudController extends CrudController
         $response = $this->crud->delete($id);
         $this->makeLaguagesDirectories();
         return $response;
+    }
+
+    public function bulkDelete()
+    {
+        $this->crud->hasAccessOrFail('bulkDelete');
+
+        $entries = request()->input('entries', []);
+        $deletedEntries = [];
+
+        foreach ($entries as $key => $id) {
+            if ($entry = $this->crud->model->find($id)) {
+                $deletedEntries[] = $entry->delete();
+            }
+        }
+
+        $this->makeLaguagesDirectories();
+        return $deletedEntries;
     }
 
     public function makeTransletableFile()
