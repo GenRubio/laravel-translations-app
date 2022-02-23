@@ -92,8 +92,17 @@ class GnLangFileCrudController extends CrudController
         } else {
             return \Alert::error('Ha ocurido un error.');
         }
-
+        
+        $this->removeLangFile($langFile->format_name);
         return $this->crud->delete($id);
+    }
+
+    private function removeLangFile($name){
+        $folder = resource_path('lang');
+        foreach ($this->getLanguages() as $lang) {
+            $path = $folder . '/' . $lang;
+            unlink($path . '/' . $name . '.php');
+        }
     }
 
     private function getGnLangFileById($id){
@@ -103,5 +112,13 @@ class GnLangFileCrudController extends CrudController
     public function importFiles(){
         #$gnFiles = $this->getAllGnLangFiles();
         #$this->makeLaguagesDirectories();
+    }
+
+    private function getLanguages()
+    {
+        /**
+         * Hacer la consulta a la tabla de lenguajes del proyecto devolver en array los lenguajes
+         */
+        return ['es', 'en', 'ru'];
     }
 }
