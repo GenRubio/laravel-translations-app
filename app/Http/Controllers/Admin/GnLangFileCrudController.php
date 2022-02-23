@@ -41,7 +41,12 @@ class GnLangFileCrudController extends CrudController
             ]
         );
 
+        $this->setShowNumberRows();
         //$this->crud->addButtonFromView('top', 'import-actual-lang-files', 'import-actual-lang-files', 'end');
+    }
+
+    private function setShowNumberRows(){
+        $this->crud->setDefaultPageLength(100);
     }
 
     protected function setupCreateOperation()

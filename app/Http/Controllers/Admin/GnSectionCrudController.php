@@ -40,6 +40,12 @@ class GnSectionCrudController extends CrudController
                 ]
             ]
         );
+
+        $this->setShowNumberRows();
+    }
+
+    private function setShowNumberRows(){
+        $this->crud->setDefaultPageLength(100);
     }
 
     protected function setupCreateOperation()

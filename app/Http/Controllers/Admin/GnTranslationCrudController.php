@@ -64,8 +64,13 @@ class GnTranslationCrudController extends CrudController
             ]
         );
 
-        $this->crud->addButtonFromView('top', 'make-transletable-file', 'make-transletable-file', 'end');
         $this->setFilters();
+        $this->setShowNumberRows();
+        $this->crud->addButtonFromView('top', 'make-transletable-file', 'make-transletable-file', 'end');
+    }
+
+    private function setShowNumberRows(){
+        $this->crud->setDefaultPageLength(100);
     }
 
     private function setFilters()
