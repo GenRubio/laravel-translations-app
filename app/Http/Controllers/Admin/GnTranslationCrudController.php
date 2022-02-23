@@ -24,12 +24,23 @@ class GnTranslationCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\BulkDeleteOperation {
         bulkDelete as traitBulkDelete;
     }
+    use \Backpack\CRUD\app\Http\Controllers\Operations\FetchOperation;
 
     public function setup()
     {
         CRUD::setModel(\App\Models\GnTranslation::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/gn-translation');
         CRUD::setEntityNameStrings('lang text', 'lang texts');
+    }
+
+    public function fetchGnLangFile()
+    {
+        return $this->fetch(\App\Models\GnLangFile::class);
+    }
+
+    public function fetchGnSection()
+    {
+        return $this->fetch(\App\Models\GnSection::class);
     }
 
     protected function setupListOperation()
@@ -68,6 +79,11 @@ class GnTranslationCrudController extends CrudController
                     'label' => 'Helper'
                 ],
                 [
+                    'name' => 'value',
+                    'type' => 'text',
+                    'label' => 'Texto'
+                ],
+                [
                     'name' => 'file',
                     'type' => 'relationship',
                     'label' => 'Lang File',
@@ -83,11 +99,6 @@ class GnTranslationCrudController extends CrudController
                     'name' => 'format_key',
                     'type' => 'text',
                     'label' => 'Format key'
-                ],
-                [
-                    'name' => 'value',
-                    'type' => 'text',
-                    'label' => 'Value'
                 ]
             ]
         );
@@ -149,20 +160,24 @@ class GnTranslationCrudController extends CrudController
                     'type' => 'hidden',
                 ],
                 [
-                    'label'     => "Lang File",
-                    'type'      => 'select2',
-                    'name'      => 'gn_lang_file_id',
-                    'entity'    => 'file',
-                    'model'     => "App\Models\GnLangFile",
+                    'label' => "Lang File",
+                    'type' => "relationship",
+                    'name' => 'gn_lang_file_id',
+                    'entity' => 'gnLangFile',
                     'attribute' => 'name',
+                    'ajax' => true,
+                    'inline_create' => true,
+                    'minimum_input_length' => 0,
                 ],
                 [
                     'label'     => "Lang Section",
-                    'type'      => 'select2',
-                    'name'      => 'gn_section_id',
-                    'entity'    => 'section',
-                    'model'     => "App\Models\GnSection",
+                    'type' => "relationship",
+                    'name' => 'gn_section_id',
+                    'entity' => 'gnSection',
                     'attribute' => 'section',
+                    'ajax' => true,
+                    'inline_create' => true,
+                    'minimum_input_length' => 0,
                 ],
                 [
                     'name' => 'value',

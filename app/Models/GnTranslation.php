@@ -55,9 +55,18 @@ class GnTranslation extends Model
         return $this->hasOne(GnSection::class, 'id', 'gn_section_id');
     }
 
+    public function gnSection(){
+        return $this->hasOne(GnSection::class, 'id', 'gn_section_id');
+    }
+
     public function file(){
         return $this->hasOne(GnLangFile::class, 'id', 'gn_lang_file_id');
     }
+
+    public function gnLangFile(){
+        return $this->hasOne(GnLangFile::class, 'id', 'gn_lang_file_id');
+    }
+
 
     /*
     |--------------------------------------------------------------------------

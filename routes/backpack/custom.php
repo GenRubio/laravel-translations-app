@@ -16,13 +16,9 @@ Route::group([
     ),
     'namespace'  => 'App\Http\Controllers\Admin',
 ], function () { // custom admin routes
-    Route::prefix('gn-translation')->group(function () {
-        Route::crud('/', 'GnTranslationCrudController');
-        Route::get('/make-translations-file', 'GnTranslationCrudController@makeTransletableFile');
-    });
+    Route::crud('gn-translation', 'GnTranslationCrudController');
+    Route::get('gn-translation/make-translations-file', 'GnTranslationCrudController@makeTransletableFile');
     Route::crud('gn-section', 'GnSectionCrudController');
-    Route::prefix('gn-lang-file')->group(function () {
-        Route::crud('/', 'GnLangFileCrudController');
-        Route::get('/import-actual-lang-files', 'GnLangFileCrudController@importFiles');
-    });
+    Route::crud('gn-lang-file', 'GnLangFileCrudController');
+    Route::get('gn-lang-file/import-actual-lang-files', 'GnLangFileCrudController@importFiles');
 }); // this should be the absolute last line of this file
