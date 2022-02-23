@@ -17,6 +17,7 @@ class CreateGnSectionsTable extends Migration
             $table->id();
             $table->string('section')->unique();
             $table->string('format_section');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

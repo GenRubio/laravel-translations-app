@@ -17,6 +17,7 @@ class CreateGnLangFilesTable extends Migration
             $table->id();
             $table->string('name')->unique();
             $table->string('format_name');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

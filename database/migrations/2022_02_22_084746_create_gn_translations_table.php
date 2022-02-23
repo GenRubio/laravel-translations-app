@@ -20,7 +20,15 @@ class CreateGnTranslationsTable extends Migration
             $table->string('key');
             $table->string('format_key');
             $table->text('value');
+            $table->softDeletes();
             $table->timestamps();
+
+            $table->foreign('gn_section_id')
+                ->references('id')->on('gn_sections')
+                ->onDelete('cascade');
+            $table->foreign('gn_lang_file_id')
+                ->references('id')->on('gn_lang_files')
+                ->onDelete('cascade');
         });
     }
 

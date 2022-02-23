@@ -101,7 +101,9 @@ class GnLangFileCrudController extends CrudController
         $folder = resource_path('lang');
         foreach ($this->getLanguages() as $lang) {
             $path = $folder . '/' . $lang;
-            unlink($path . '/' . $name . '.php');
+            if (!is_dir($path)) {
+                unlink($path . '/' . $name . '.php');
+            }
         }
     }
 

@@ -6,10 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Backpack\CRUD\app\Models\Traits\SpatieTranslatable\HasTranslations;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class GnTranslation extends Model
 {
     use CrudTrait;
+    use SoftDeletes;
     use HasTranslations;
 
     /*
