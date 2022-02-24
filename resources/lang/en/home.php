@@ -4,7 +4,7 @@ return [
 
   'title' => 'Hola mundo',
   'asdfsdf' => 'hola mundo',
-  'test' => 'Test En',
+  'test' => 'Test Es',
   'modal' => [
    'title' => 'Hola',
   ],

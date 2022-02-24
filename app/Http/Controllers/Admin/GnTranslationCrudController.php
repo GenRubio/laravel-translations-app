@@ -106,6 +106,7 @@ class GnTranslationCrudController extends CrudController
         $this->setFilters();
         $this->setShowNumberRows();
         $this->crud->addButtonFromView('line', 'copy-helper-trans', 'copy-helper-trans', 'beginning');
+        $this->crud->addButtonFromView('top', 'translate-all-files', 'translate-all-files', 'end');
         $this->crud->addButtonFromView('top', 'make-transletable-file', 'make-transletable-file', 'end');
     }
 
@@ -342,6 +343,15 @@ class GnTranslationCrudController extends CrudController
 
         $this->makeLaguagesDirectories();
         return $deletedEntries;
+    }
+
+    public function showTexts($lang = null, $file = null){
+        return view('admin.multi-edit-languages')->with([
+            'lang' => $lang ? $lang : 'es',
+            'file' => $file,
+            'langFiles' => $this->getAllLangFiles(),
+            'crud' => $this->crud
+        ]);
     }
 
     public function makeTransletableFile()
