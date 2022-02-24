@@ -105,6 +105,7 @@ class GnTranslationCrudController extends CrudController
 
         $this->setFilters();
         $this->setShowNumberRows();
+        $this->crud->addButtonFromView('line', 'copy-helper-trans', 'copy-helper-trans', 'beginning');
         $this->crud->addButtonFromView('top', 'make-transletable-file', 'make-transletable-file', 'end');
     }
 
