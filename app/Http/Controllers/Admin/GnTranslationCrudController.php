@@ -179,11 +179,27 @@ class GnTranslationCrudController extends CrudController
                     'ajax' => true,
                     'inline_create' => true,
                     'minimum_input_length' => 0,
-                ],
+                ]
+            ]
+        );
+
+        foreach($this->getLanguages() as $lang){
+            $this->crud->addFields(
+                [
+                    [
+                        'name' => 'laguages[' . $lang . ']',
+                        'type' => 'textarea',
+                        'label' => 'Lang (' . $lang . ')'
+                    ]
+                ]
+            );
+        }
+
+        $this->crud->addFields(
+            [
                 [
                     'name' => 'value',
-                    'type' => 'textarea',
-                    'label' => 'Value'
+                    'type' => 'hidden',
                 ]
             ]
         );
@@ -226,10 +242,49 @@ class GnTranslationCrudController extends CrudController
         if ($this->keyInUse()) {
             return redirect()->back()->withErrors(['error' => "Esta key ya esta en uso."]);
         } else {
+            if (!$this->validateLaguagesInputs()){
+                return redirect()->back()->withErrors(['error' => "Debes rellenar al manos 1 campo de lenguaje."]);
+            }
+
+            $languages = $this->prepareDataLaguages($this->crud->getRequest()->get('laguages'));
             $response = $this->traitStore();
+            $this->updateValueFromGnTranslation($this->data['entry']->id, $languages);
             $this->makeLaguagesDirectories();
             return $response;
         }
+    }
+
+    private function updateValueFromGnTranslation($id, $languages){
+        GnTranslation::where('id', $id)->update([
+            'value' => $languages
+        ]);
+    }
+
+    private function prepareDataLaguages($languages){
+        $default = "";
+        foreach($languages as $lang){
+            if ($lang && !empty($lang)){
+                $default = $lang;
+                break;
+            }
+        }
+        foreach($languages as $key => $lang){
+            if (is_null($lang) || empty($lang)){
+                $languages[$key] = $default;
+            }
+        }
+        return json_encode($languages);
+    }
+
+    private function validateLaguagesInputs(){
+        $success = false;
+        foreach($this->crud->getRequest()->get('laguages') as $lang){
+            if ($lang && !empty($lang)){
+                $success = true;
+                break;
+            }
+        }
+        return $success;
     }
 
     private function keyInUse()
