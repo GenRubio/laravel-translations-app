@@ -189,7 +189,7 @@ class GnTranslationCrudController extends CrudController
                     [
                         'name' => 'laguages[' . $lang . ']',
                         'type' => 'textarea',
-                        'label' => 'Lang (' . $lang . ')'
+                        'label' => 'Lang (' . $lang . ')' //. $this->getTranslateButton($lang)
                     ]
                 ]
             );
@@ -203,6 +203,15 @@ class GnTranslationCrudController extends CrudController
                 ]
             ]
         );
+    }
+
+    private function getGoogleTranslateButton($lang){
+        if ($lang != "es"){
+            return view('vendor.backpack.crud.buttons.translate-google-button', [
+                'lang' => $lang
+            ])->render();
+        }
+        return '';
     }
 
     protected function setupUpdateOperation()
