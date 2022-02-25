@@ -18,6 +18,7 @@ Route::group([
 ], function () { // custom admin routes
     Route::crud('gn-translation', 'GnTranslationCrudController');
     Route::get('gn-translation/texts/{lang?}/{file?}', 'GnTranslationCrudController@showTexts');
+    Route::post('gn-translation/update-texts', 'GnTranslationCrudController@updateTexts');
     Route::get('gn-translation/make-translations-file', 'GnTranslationCrudController@makeTransletableFile');
     Route::crud('gn-section', 'GnSectionCrudController');
     Route::crud('gn-lang-file', 'GnLangFileCrudController');

@@ -27,6 +27,23 @@ $breadcrumbs = $breadcrumbs ?? $defaultBreadcrumbs;
             $langFileSelected = null;
         @endphp
         <div class="{{ $crud->getListContentClass() }}" style="margin-bottom: 15px;">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="selected-laguage">IDIOMA</label>
+                        <select class="form-control" id="selected-laguage" data-route="{{ url($crud->route . '/texts') }}" data-file="{{ $file }}">
+                            @foreach ($laguages as $laguage)
+                                @if ($laguage->abbr == $lang)
+                                    <option value="{{  $laguage->abbr }}" selected="selected">{{  $laguage->name }}</option>
+                                @else
+                                    <option value="{{  $laguage->abbr }}">{{  $laguage->name }}</option>
+                                @endif
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <hr>
             <ul class="nav nav-tabs">
                 @if ($file)
                     @foreach ($langFiles as $langFile)
@@ -62,9 +79,14 @@ $breadcrumbs = $breadcrumbs ?? $defaultBreadcrumbs;
                     @endforeach
                 @endif
             </ul>
+            @php
+                $oldLocale = app()->getLocale();
+                app()->setLocale($lang);
+            @endphp
             <div class="p-3" style="background-color: white">
-                <form action="" method="POST">
+                <form action="{{ backpack_url('gn-translation/update-texts') }}" method="POST">
                     {{ csrf_field() }}
+                    <input type="hidden" name="lang" value="{{ $lang }}">
                     <div class="row">
                         <div class="col-lg-2 mb-3">
                             <h5>Key</h5>
@@ -84,24 +106,27 @@ $breadcrumbs = $breadcrumbs ?? $defaultBreadcrumbs;
                             </div>
                             <div class="col-lg-5">
                                 <div class="form-group">
-                                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="2"> {{ $translation->key }}</textarea>
-                                  </div>
+                                    <textarea class="form-control" name="translations[{{ $translation->id }}]"
+                                        rows="2"> {{ $translation->value }}</textarea>
+                                </div>
                             </div>
                         @endforeach
                     </div>
-
                     <hr>
-                    <button class="btn btn-success ladda-button" type="submit">
-                        <i class="fa fa-save"></i> {{ trans('admin.save') }}
+                    <button class="btn btn-primary ladda-button" type="submit">
+                        <i class="fa fa-save"></i> Guardar cambios
                     </button>
-                    <a href="{{ backpack_url('photo') }}" class="btn btn-danger ladda-button"
-                        onclick="return confirm('Los cambios no guardados se perderan.')">
-                        <i class="fa fa-times"></i> {{ trans('admin.back') }}
+                    <a href="javascript:void(0)" onclick="deleteEntry(this)"
+                        data-route="{{ backpack_url('gn-translation') }}" class="btn btn-secondary ladda-button"
+                        data-button-type="delete">
+                        <i class="fa fa-times"></i> Salir sin guardar
                     </a>
                 </form>
             </div>
+            @php
+                app()->setLocale($oldLocale);
+            @endphp
         </div>
-
     </div>
 @endsection
 
@@ -132,7 +157,34 @@ $breadcrumbs = $breadcrumbs ?? $defaultBreadcrumbs;
     </script>
     <script src="{{ asset('packages/backpack/crud/js/list.js') . '?v=' . config('backpack.base.cachebusting_string') }}">
     </script>
+    <script>
+        $('#selected-laguage').on('change', (ev) => {
+            let item = $(ev.currentTarget);
+            location.href = item.data('route') + "/" + item.val() + "/" + item.data('file');
+        });
 
+        if (typeof deleteEntry != 'function') {
+            $("[data-button-type=delete]").unbind('click');
+
+            function deleteEntry(button) {
+                // ask for confirmation before deleting an item
+                // e.preventDefault();
+                var route = $(button).attr('data-route');
+
+                swal({
+                    title: "Advertencia",
+                    text: "¿Está seguro que desea salir sin guardar?",
+                    icon: "warning",
+                    buttons: ["Cancelar", "Salir sin guardar"],
+                    dangerMode: true,
+                }).then((value) => {
+                    if (value) {
+                        location.href = route;
+                    }
+                });
+            }
+        }
+    </script>
     <!-- CRUD LIST CONTENT - crud_list_scripts stack -->
     @stack('crud_list_scripts')
 @endsection
