@@ -21,6 +21,5 @@ Route::group([
     Route::get('gn-translation/make-translations-file', 'GnTranslationCrudController@makeTransletableFile');
     Route::crud('gn-section', 'GnSectionCrudController');
     Route::crud('gn-lang-file', 'GnLangFileCrudController');
-    Route::get('gn-lang-file/import-actual-lang-files', 'GnLangFileCrudController@importFiles');
     Route::crud('language', 'LanguageCrudController');
 }); // this should be the absolute last line of this file

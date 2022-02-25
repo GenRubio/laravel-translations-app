@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\GnLangFileRequest;
+use App\Models\Language;
 use App\Models\GnLangFile;
+use App\Http\Requests\GnLangFileRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
@@ -42,7 +43,6 @@ class GnLangFileCrudController extends CrudController
         );
 
         $this->setShowNumberRows();
-        //$this->crud->addButtonFromView('top', 'import-actual-lang-files', 'import-actual-lang-files', 'end');
     }
 
     private function setShowNumberRows(){
@@ -105,7 +105,7 @@ class GnLangFileCrudController extends CrudController
     private function removeLangFile($name){
         $folder = resource_path('lang');
         foreach ($this->getLanguages() as $lang) {
-            $path = $folder . '/' . $lang;
+            $path = $folder . '/' . $lang->abbr;
             if (!is_dir($path)) {
                 unlink($path . '/' . $name . '.php');
             }
@@ -116,16 +116,8 @@ class GnLangFileCrudController extends CrudController
         return GnLangFile::find($id);
     }
 
-    public function importFiles(){
-        #$gnFiles = $this->getAllGnLangFiles();
-        #$this->makeLaguagesDirectories();
-    }
-
     private function getLanguages()
     {
-        /**
-         * Hacer la consulta a la tabla de lenguajes del proyecto devolver en array los lenguajes
-         */
-        return ['es', 'en', 'ru'];
+        return Language::where('active', 1)->orderBy('default', 'DESC')->get();
     }
 }
