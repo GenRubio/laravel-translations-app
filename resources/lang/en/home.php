@@ -2,6 +2,6 @@
 
 return [
 
-  'title' => 'safsdf',
+  'hello_word' => 'potato',
 
 ];

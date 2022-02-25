@@ -96,33 +96,72 @@ class LanguageCrudController extends CrudController
         }
 
         if (request()->input('default') == true) {
-            $this->updateAppLang(request()->input('abbr'));
-            \Artisan::call('config:clear');
+            $this->updateConfigAppFile(request()->input('abbr'));
         }
 
+        $this->updateConfigBackpackCrudFile(request()->input('abbr'), request()->input('active') == "1" ? true : false);
+        \Artisan::call('config:clear');
         return $this->traitStore();
     }
 
     public function update()
     {
         if (request()->input('default') == true) {
-            $this->updateAppLang(request()->input('abbr'));
-            \Artisan::call('config:clear');
+            $this->updateConfigAppFile(request()->input('abbr'));
         }
 
+        $this->updateConfigBackpackCrudFile(request()->input('abbr'), request()->input('active') == "1" ? true : false);
         $response = $this->traitUpdate();
+        \Artisan::call('config:clear');
         return $response;
     }
 
-    private function updateAppLang($lang)
+    private function updateConfigBackpackCrudFile($lang, $active)
+    {
+        if (count($this->getLaguagesCount())) {
+            if ($active){
+                $this->changeLanguagesBackpack('"' . $lang . '" =>', '"' . $lang . '" =>', true);
+            }
+            else{
+                $this->changeLanguagesBackpack('"' . $lang . '" =>', '"' . $lang . '" =>', false);
+            }
+        } else {
+            $this->changeLanguagesBackpack("'en' =>", "'en' =>", false);
+            $this->changeLanguagesBackpack("'fr' =>", "'fr' =>", false);
+            $this->changeLanguagesBackpack("'it' =>", "'it' =>", false);
+            $this->changeLanguagesBackpack("'ro' =>", "'ro' =>", false);
+
+            $this->changeLanguagesBackpack('"' . $lang . '" =>', '"' . $lang . '" =>', true);
+        }
+    }
+
+    private function changeLanguagesBackpack($lineFind, $replaceLine, $enable)
+    {
+        $folder = base_path('config');
+        $filePhpPath = $folder . '/backpack/crud.php';
+        $fileTmpPath = $folder . '/backpack/crud.tmp';
+
+        $this->updatePhpFile($filePhpPath, $fileTmpPath, $lineFind, $replaceLine, true, $enable);
+    }
+
+    private function getLaguagesCount()
+    {
+        return Language::all();
+    }
+
+    private function updateConfigAppFile($lang)
     {
         $folder = base_path('config');
         $filePhpPath = $folder . '/app.php';
         $fileTmpPath = $folder . '/app.tmp';
-
         $lineFind = "'locale' =>";
         $replaceLine = "'locale' => '" . $lang . "',\n";
 
+        $this->updatePhpFile($filePhpPath, $fileTmpPath, $lineFind, $replaceLine);
+    }
+
+    private function updatePhpFile($filePhpPath, $fileTmpPath, $lineFind, $replaceLine, $crud = false, $enable = false)
+    {
         $reading = fopen($filePhpPath, 'r');
         $writing = fopen($fileTmpPath, 'w');
 
@@ -131,7 +170,16 @@ class LanguageCrudController extends CrudController
         while (!feof($reading)) {
             $line = fgets($reading);
             if (stristr($line, $lineFind)) {
-                $line = $replaceLine;
+                if ($crud) {
+                    if ($enable) {
+                        $line = str_replace("//", "", $line);
+                    } else {
+                        $formatLine = str_replace("'", '"', $line);
+                        $line = '//' . $formatLine;
+                    }
+                } else {
+                    $line = $replaceLine;
+                }
                 $replaced = true;
             }
             fputs($writing, $line);
@@ -155,12 +203,9 @@ class LanguageCrudController extends CrudController
     public function destroy($id)
     {
         $language = Language::find($id);
+        $this->changeLanguagesBackpack('"' . $language->abbr . '" =>', '"' . $language->abbr . '" =>', false);
         $destroyResult = $this->traitDestroy($id);
-
-        if ($destroyResult) {
-            \File::deleteDirectory(resource_path('lang/' . $language->abbr));
-        }
-
+        \Artisan::call('config:clear');
         return $destroyResult;
     }
 }

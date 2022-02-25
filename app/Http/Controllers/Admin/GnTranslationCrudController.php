@@ -106,9 +106,14 @@ class GnTranslationCrudController extends CrudController
 
         $this->setFilters();
         $this->setShowNumberRows();
-        $this->crud->addButtonFromView('line', 'copy-helper-trans', 'copy-helper-trans', 'beginning');
-        $this->crud->addButtonFromView('top', 'translate-all-files', 'translate-all-files', 'end');
-        $this->crud->addButtonFromView('bottom', 'make-transletable-file', 'make-transletable-file', 'end');
+        if (count($this->getLanguages())){
+            $this->crud->addButtonFromView('line', 'copy-helper-trans', 'copy-helper-trans', 'beginning');
+            $this->crud->addButtonFromView('top', 'translate-all-files', 'translate-all-files', 'end');
+            $this->crud->addButtonFromView('bottom', 'make-transletable-file', 'make-transletable-file', 'end');
+        }
+        else{
+            $this->crud->removeButton('create');
+        }
     }
 
     private function setShowNumberRows()
