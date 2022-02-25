@@ -1,3 +1,3 @@
-<a href="{{ url($crud->route . '/make-translations-file') }}" class="btn btn-info ml-2">
+<a href="{{ url($crud->route . '/make-translations-file') }}" class="btn btn-sm btn-secondary bulk-button">
     <i class="las la-language"></i> Update translations file
 </a>

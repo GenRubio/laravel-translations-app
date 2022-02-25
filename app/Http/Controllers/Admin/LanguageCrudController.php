@@ -12,7 +12,9 @@ class LanguageCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation {
         store as traitStore;
     }
-    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
+    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation {
+        update as traitUpdate;
+    }
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation {
         destroy as traitDestroy;
     }
@@ -93,7 +95,54 @@ class LanguageCrudController extends CrudController
             \File::copyDirectory(resource_path('lang/' . $defaultLang->abbr), resource_path('lang/' . request()->input('abbr')));
         }
 
+        if (request()->input('default') == true) {
+            $this->updateAppLang(request()->input('abbr'));
+            \Artisan::call('config:clear');
+        }
+
         return $this->traitStore();
+    }
+
+    public function update()
+    {
+        if (request()->input('default') == true) {
+            $this->updateAppLang(request()->input('abbr'));
+            \Artisan::call('config:clear');
+        }
+
+        $response = $this->traitUpdate();
+        return $response;
+    }
+
+    private function updateAppLang($lang)
+    {
+        $folder = base_path('config');
+        $filePhpPath = $folder . '/app.php';
+        $fileTmpPath = $folder . '/app.tmp';
+
+        $lineFind = "'locale' =>";
+        $replaceLine = "'locale' => '" . $lang . "',\n";
+
+        $reading = fopen($filePhpPath, 'r');
+        $writing = fopen($fileTmpPath, 'w');
+
+        $replaced = false;
+
+        while (!feof($reading)) {
+            $line = fgets($reading);
+            if (stristr($line, $lineFind)) {
+                $line = $replaceLine;
+                $replaced = true;
+            }
+            fputs($writing, $line);
+        }
+        fclose($reading);
+        fclose($writing);
+        if ($replaced) {
+            rename($fileTmpPath, $filePhpPath);
+        } else {
+            unlink($fileTmpPath);
+        }
     }
 
     /**

@@ -6,6 +6,7 @@ use App\Http\Requests\GnTranslationRequest;
 use App\Models\GnLangFile;
 use App\Models\GnSection;
 use App\Models\GnTranslation;
+use App\Models\Language;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
@@ -107,7 +108,7 @@ class GnTranslationCrudController extends CrudController
         $this->setShowNumberRows();
         $this->crud->addButtonFromView('line', 'copy-helper-trans', 'copy-helper-trans', 'beginning');
         $this->crud->addButtonFromView('top', 'translate-all-files', 'translate-all-files', 'end');
-        $this->crud->addButtonFromView('top', 'make-transletable-file', 'make-transletable-file', 'end');
+        $this->crud->addButtonFromView('bottom', 'make-transletable-file', 'make-transletable-file', 'end');
     }
 
     private function setShowNumberRows()
@@ -188,9 +189,9 @@ class GnTranslationCrudController extends CrudController
             $this->crud->addFields(
                 [
                     [
-                        'name' => 'laguages[' . $lang . ']',
+                        'name' => 'laguages[' . $lang->abbr . ']',
                         'type' => 'textarea',
-                        'label' => 'Lang (' . $lang . ')' //. $this->getTranslateButton($lang)
+                        'label' => 'Lang (' . $lang->name . ')' //. $this->getTranslateButton($lang)
                     ]
                 ]
             );
@@ -373,7 +374,7 @@ class GnTranslationCrudController extends CrudController
     {
         $languagesFiles = $this->getAllLangFiles();
         foreach ($languages as $lang) {
-            $path = $folder . '/' . $lang;
+            $path = $folder . '/' . $lang->abbr;
             foreach ($languagesFiles as $languagesFile) {
                 $this->makeOrUpdateLaguagesFile($path, $lang, $languagesFile);
             }
@@ -383,7 +384,7 @@ class GnTranslationCrudController extends CrudController
     private function createFolders($folder, $languages)
     {
         foreach ($languages as $lang) {
-            $path = $folder . '/' . $lang;
+            $path = $folder . '/' . $lang->abbr;
             if (!is_dir($path)) {
                 mkdir($path, 0755, true);
             }
@@ -395,7 +396,7 @@ class GnTranslationCrudController extends CrudController
         $fullPath = $path . '/' . $languagesFile->format_name . '.php';
 
         $oldLocale = app()->getLocale();
-        app()->setLocale($lang);
+        app()->setLocale($lang->abbr);
         \File::put($fullPath, $this->getFileContent($languagesFile));
         app()->setLocale($oldLocale);
     }
@@ -464,9 +465,6 @@ class GnTranslationCrudController extends CrudController
 
     private function getLanguages()
     {
-        /**
-         * Hacer la consulta a la tabla de lenguajes del proyecto devolver en array los lenguajes
-         */
-        return ['es', 'en', 'ru'];
+        return Language::where('active', 1)->orderBy('default', 'DESC')->get();
     }
 }
