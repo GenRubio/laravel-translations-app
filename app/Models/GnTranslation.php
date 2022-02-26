@@ -20,16 +20,16 @@ class GnTranslation extends Model
     |--------------------------------------------------------------------------
     */
 
-    protected $table = 'gn_translations';
+    protected $table = 'lang_translations';
     protected $primaryKey = 'id';
     // public $timestamps = false;
     protected $guarded = ['id'];
     protected $fillable = [
-        'key',
-        'format_key',
+        'name',
+        'format_name',
         'value',
-        'gn_section_id',
-        'gn_lang_file_id'
+        'lang_section_id',
+        'lang_file_id'
     ];
     // protected $hidden = [];
     // protected $dates = [];
@@ -52,19 +52,19 @@ class GnTranslation extends Model
 
     public function section()
     {
-        return $this->hasOne(GnSection::class, 'id', 'gn_section_id');
+        return $this->hasOne(GnSection::class, 'id', 'lang_section_id');
     }
 
     public function gnSection(){
-        return $this->hasOne(GnSection::class, 'id', 'gn_section_id');
+        return $this->hasOne(GnSection::class, 'id', 'lang_section_id');
     }
 
     public function file(){
-        return $this->hasOne(GnLangFile::class, 'id', 'gn_lang_file_id');
+        return $this->hasOne(GnLangFile::class, 'id', 'lang_file_id');
     }
 
     public function gnLangFile(){
-        return $this->hasOne(GnLangFile::class, 'id', 'gn_lang_file_id');
+        return $this->hasOne(GnLangFile::class, 'id', 'lang_file_id');
     }
 
 
@@ -81,7 +81,7 @@ class GnTranslation extends Model
     */
 
     public function getHelperAttribute(){
-        $route = ($this->file ? $this->file->format_name . '.' : "") . ($this->section ? $this->section->format_section . '.' : "") . $this->attributes['format_key'];
+        $route = ($this->file ? $this->file->format_name . '.' : "") . ($this->section ? $this->section->format_name . '.' : "") . $this->attributes['format_name'];
         return "trans('" . $route . "')";
     }
 
@@ -91,8 +91,8 @@ class GnTranslation extends Model
     |--------------------------------------------------------------------------
     */
 
-    public function setFormatKeyAttribute()
+    public function setFormatNameAttribute()
     {
-        $this->attributes['format_key'] = Str::slug($this->attributes['key'], '_');
+        $this->attributes['format_name'] = Str::slug($this->attributes['name'], '_');
     }
 }

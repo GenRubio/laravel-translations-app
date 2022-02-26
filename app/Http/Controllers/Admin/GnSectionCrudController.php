@@ -29,12 +29,12 @@ class GnSectionCrudController extends CrudController
         $this->crud->setColumns(
             [
                 [
-                    'name' => 'format_section',
+                    'name' => 'format_name',
                     'type' => 'text',
                     'label' => 'Format section'
                 ],
                 [
-                    'name' => 'section',
+                    'name' => 'name',
                     'type' => 'text',
                     'label' => 'Section name'
                 ]
@@ -55,12 +55,12 @@ class GnSectionCrudController extends CrudController
         $this->crud->addFields(
             [
                 [
-                    'name' => 'section',
+                    'name' => 'name',
                     'type' => 'text',
                     'label' => 'Section <br> <small>Auto format: input = Hello Word | result = hello_word</small>'
                 ],
                 [
-                    'name' => 'format_section',
+                    'name' => 'format_name',
                     'type' => 'hidden',
                 ]
             ]
@@ -72,7 +72,7 @@ class GnSectionCrudController extends CrudController
         $this->crud->addFields(
             [
                 [
-                    'name' => 'format_section',
+                    'name' => 'format_name',
                     'type' => 'text',
                     'label' => 'Format section',
                     'attributes' => [

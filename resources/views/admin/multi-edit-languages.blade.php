@@ -99,10 +99,10 @@ $breadcrumbs = $breadcrumbs ?? $defaultBreadcrumbs;
                         </div>
                         @foreach ($langFileSelected->translations as $translation)
                             <div class="col-lg-2">
-                                {{ $translation->format_key }}
+                                {{ $translation->format_name }}
                             </div>
                             <div class="col-lg-5">
-                                {{ $translation->key }}
+                                {{ $translation->name }}
                             </div>
                             <div class="col-lg-5">
                                 <div class="form-group">

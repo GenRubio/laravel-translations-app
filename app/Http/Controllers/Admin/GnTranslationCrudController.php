@@ -95,12 +95,12 @@ class GnTranslationCrudController extends CrudController
                     'name' => 'section',
                     'type' => 'relationship',
                     'label' => 'Lang Section',
-                    'attribute' => 'format_section',
+                    'attribute' => 'format_name',
                 ],
                 [
-                    'name' => 'format_key',
+                    'name' => 'format_name',
                     'type' => 'text',
-                    'label' => 'Format key'
+                    'label' => 'Format name'
                 ]
             ]
         );
@@ -125,7 +125,7 @@ class GnTranslationCrudController extends CrudController
     private function setFilters()
     {
         $this->crud->addFilter([
-            'name' => 'gn_lang_file_id',
+            'name' => 'lang_file_id',
             'type' => 'select2',
             'label' => 'Lang File',
         ], function () {
@@ -135,21 +135,21 @@ class GnTranslationCrudController extends CrudController
             }
             return $data;
         }, function ($value) {
-            $this->crud->addClause('where', 'gn_lang_file_id', $value);
+            $this->crud->addClause('where', 'lang_file_id', $value);
         });
 
         $this->crud->addFilter([
-            'name' => 'gn_section_id',
+            'name' => 'lsng_section_id',
             'type' => 'select2',
             'label' => 'Lang Section',
         ], function () {
             $data = [];
             foreach ($this->getAllSections() as $section) {
-                $data[$section->id] = $section->section;
+                $data[$section->id] = $section->name;
             }
             return $data;
         }, function ($value) {
-            $this->crud->addClause('where', 'gn_section_id', $value);
+            $this->crud->addClause('where', 'lang_section_id', $value);
         });
     }
 
@@ -160,18 +160,18 @@ class GnTranslationCrudController extends CrudController
         $this->crud->addFields(
             [
                 [
-                    'name' => 'key',
+                    'name' => 'name',
                     'type' => 'text',
-                    'label' => 'Key <br> <small>Auto format: input = Hello Word | result = hello_word</small>'
+                    'label' => 'Name <br> <small>Auto format: input = Hello Word | result = hello_word</small>'
                 ],
                 [
-                    'name' => 'format_key',
+                    'name' => 'format_name',
                     'type' => 'hidden',
                 ],
                 [
                     'label' => "Lang File",
                     'type' => "relationship",
-                    'name' => 'gn_lang_file_id',
+                    'name' => 'lang_file_id',
                     'entity' => 'gnLangFile',
                     'attribute' => 'name',
                     'ajax' => true,
@@ -181,9 +181,9 @@ class GnTranslationCrudController extends CrudController
                 [
                     'label'     => "Lang Section",
                     'type' => "relationship",
-                    'name' => 'gn_section_id',
+                    'name' => 'lang_section_id',
                     'entity' => 'gnSection',
-                    'attribute' => 'section',
+                    'attribute' => 'name',
                     'ajax' => true,
                     'inline_create' => true,
                     'minimum_input_length' => 0,
@@ -197,7 +197,7 @@ class GnTranslationCrudController extends CrudController
                     [
                         'name' => 'laguages[' . $lang->abbr . ']',
                         'type' => 'textarea',
-                        'label' => 'Lang (' . $lang->name . ')' //. $this->getTranslateButton($lang)
+                        'label' => 'Lang (' . $lang->name . ')'
                     ]
                 ]
             );
@@ -213,23 +213,14 @@ class GnTranslationCrudController extends CrudController
         );
     }
 
-    private function getGoogleTranslateButton($lang){
-        if ($lang != "es"){
-            return view('vendor.backpack.crud.buttons.translate-google-button', [
-                'lang' => $lang
-            ])->render();
-        }
-        return '';
-    }
-
     protected function setupUpdateOperation()
     {
         $this->crud->addFields(
             [
                 [
-                    'name' => 'format_key',
+                    'name' => 'format_name',
                     'type' => 'text',
-                    'label' => 'Format Key',
+                    'label' => 'Format Name',
                     'attributes' => [
                         'readonly'  => 'readonly',
                     ],
@@ -301,8 +292,8 @@ class GnTranslationCrudController extends CrudController
     private function keyInUse()
     {
         $key = $this->crud->getRequest()->get('key');
-        $langFile = $this->crud->getRequest()->get('gn_lang_file_id');
-        $section = $this->crud->getRequest()->get('gn_section_id');
+        $langFile = $this->crud->getRequest()->get('lang_file_id');
+        $section = $this->crud->getRequest()->get('lang_section_id');
         return $this->getTranslationByParameters($key, $langFile, $section) ? true : false;
     }
 
@@ -420,13 +411,13 @@ class GnTranslationCrudController extends CrudController
         $content = "";
 
         foreach ($this->getTranslationsBySection($translations, null) as $text) {
-            $content .= "  '" . $text->format_key . "' => '" . $this->refactorValue($text->value) . "',\n";
+            $content .= "  '" . $text->format_name . "' => '" . $this->refactorValue($text->value) . "',\n";
         }
 
         foreach ($sections as $section) {
-            $content .= "  '" . $section->format_section . "' => [\n";
+            $content .= "  '" . $section->format_name . "' => [\n";
             foreach ($this->getTranslationsBySection($translations, $section->id) as $translation) {
-                $content .= "   '" . $translation->format_key . "' => '" . $this->refactorValue($translation->value) . "',\n";
+                $content .= "   '" . $translation->format_name . "' => '" . $this->refactorValue($translation->value) . "',\n";
             }
             $content .= "  ],\n";
         }
@@ -442,7 +433,7 @@ class GnTranslationCrudController extends CrudController
     private function getTranslationsBySection($translations, $section)
     {
         return $translations->filter(function ($item) use ($section) {
-            return $item->gn_section_id == $section;
+            return $item->lang_section_id == $section;
         })->all();
     }
 
@@ -454,9 +445,9 @@ class GnTranslationCrudController extends CrudController
 
     private function getTranslationByParameters($key, $langFile, $section)
     {
-        return GnTranslation::where('key', $key)
-            ->where('gn_lang_file_id', $langFile)
-            ->where('gn_section_id', $section)
+        return GnTranslation::where('name', $key)
+            ->where('lang_file_id', $langFile)
+            ->where('lang_section_id', $section)
             ->first();
     }
 
@@ -476,12 +467,12 @@ class GnTranslationCrudController extends CrudController
 
     private function getLaguageFileTexts($languagesFile)
     {
-        return GnTranslation::where('gn_lang_file_id', $languagesFile->id)->get();
+        return GnTranslation::where('lang_file_id', $languagesFile->id)->get();
     }
 
     private function getFileTextsSectionsIds($languagesFile)
     {
-        return GnTranslation::where('gn_lang_file_id', $languagesFile->id)->pluck('gn_section_id')->toArray();
+        return GnTranslation::where('lang_file_id', $languagesFile->id)->pluck('lang_section_id')->toArray();
     }
 
     private function getSectionsByIds($ids)

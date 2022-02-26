@@ -18,13 +18,13 @@ class GnSection extends Model
     |--------------------------------------------------------------------------
     */
 
-    protected $table = 'gn_sections';
+    protected $table = 'lang_sections';
     protected $primaryKey = 'id';
     // public $timestamps = false;
     protected $guarded = ['id'];
     protected $fillable = [
-        'section',
-        'format_section'
+        'name',
+        'format_name'
     ];
     // protected $hidden = [];
     // protected $dates = [];
@@ -42,7 +42,7 @@ class GnSection extends Model
     */
 
     public function translations(){
-        return $this->hasMany(GnTranslation::class, 'gn_section_id', 'id');
+        return $this->hasMany(GnTranslation::class, 'lang_section_id', 'id');
     }
 
     /*
@@ -63,8 +63,8 @@ class GnSection extends Model
     |--------------------------------------------------------------------------
     */
 
-    public function setFormatSectionAttribute()
+    public function setFormatNameAttribute()
     {
-        $this->attributes['format_section'] = Str::slug($this->attributes['section'], '_');
+        $this->attributes['format_name'] = Str::slug($this->attributes['name'], '_');
     }
 }

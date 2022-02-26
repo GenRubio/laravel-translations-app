@@ -2,9 +2,9 @@
 
 return [
 
-  'hello_word' => 'hola mon',
+  'title' => 'hello',
   'modal' => [
-   'title' => '25',
+   'title' => 'titulo modal 234',
   ],
 
 ];

@@ -26,7 +26,7 @@ class GnLangFileRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => ['required', 'unique:gn_lang_files,name', 'max:50']
+            'name' => ['required', 'unique:lang_files,name', 'max:50']
         ];
     }
 

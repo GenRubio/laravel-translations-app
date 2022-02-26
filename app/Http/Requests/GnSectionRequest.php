@@ -26,7 +26,7 @@ class GnSectionRequest extends FormRequest
     public function rules()
     {
         return [
-             'section' => ['required', 'unique:gn_sections,section', 'max:50']
+             'name' => ['required', 'unique:lang_sections,name', 'max:50']
         ];
     }
 

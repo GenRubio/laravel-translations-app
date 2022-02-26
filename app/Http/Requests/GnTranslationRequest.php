@@ -26,9 +26,8 @@ class GnTranslationRequest extends FormRequest
     public function rules()
     {
         return [
-            'key' => ['required', 'max:50'],
-            //'value' => ['required'],
-            'gn_lang_file_id' => ['required']
+            'name' => ['required', 'max:50'],
+            'lang_file_id' => ['required']
         ];
     }
 

@@ -18,7 +18,7 @@ class GnLangFile extends Model
     |--------------------------------------------------------------------------
     */
 
-    protected $table = 'gn_lang_files';
+    protected $table = 'lang_files';
     // protected $primaryKey = 'id';
     // public $timestamps = false;
     protected $guarded = ['id'];
@@ -42,7 +42,7 @@ class GnLangFile extends Model
     */
 
     public function translations(){
-        return $this->hasMany(GnTranslation::class, 'gn_lang_file_id', 'id');
+        return $this->hasMany(GnTranslation::class, 'lang_file_id', 'id');
     }
 
     /*
