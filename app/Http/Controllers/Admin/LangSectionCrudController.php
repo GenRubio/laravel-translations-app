@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Language;
-use App\Models\GnLangFile;
-use App\Http\Requests\GnLangFileRequest;
+use App\Http\Requests\LangSectionRequest;
+use App\Models\LangSection;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
-class GnLangFileCrudController extends CrudController
+class LangSectionCrudController extends CrudController
 {
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
@@ -20,9 +19,9 @@ class GnLangFileCrudController extends CrudController
 
     public function setup()
     {
-        CRUD::setModel(\App\Models\GnLangFile::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/gn-lang-file');
-        CRUD::setEntityNameStrings('lang file', 'lang files');
+        CRUD::setModel(\App\Models\LangSection::class);
+        CRUD::setRoute(config('backpack.base.route_prefix') . '/lang-section');
+        CRUD::setEntityNameStrings('lang section', 'lang sections');
     }
 
     protected function setupListOperation()
@@ -32,12 +31,12 @@ class GnLangFileCrudController extends CrudController
                 [
                     'name' => 'format_name',
                     'type' => 'text',
-                    'label' => 'Format name'
+                    'label' => 'Format section'
                 ],
                 [
                     'name' => 'name',
                     'type' => 'text',
-                    'label' => 'File name'
+                    'label' => 'Section name'
                 ]
             ]
         );
@@ -51,14 +50,14 @@ class GnLangFileCrudController extends CrudController
 
     protected function setupCreateOperation()
     {
-        CRUD::setValidation(GnLangFileRequest::class);
+        CRUD::setValidation(LangSectionRequest::class);
 
         $this->crud->addFields(
             [
                 [
                     'name' => 'name',
                     'type' => 'text',
-                    'label' => 'File name <br> <small>Auto format: input = Hello Word | result = hello_word</small>'
+                    'label' => 'Section <br> <small>Auto format: input = Hello Word | result = hello_word</small>'
                 ],
                 [
                     'name' => 'format_name',
@@ -66,7 +65,6 @@ class GnLangFileCrudController extends CrudController
                 ]
             ]
         );
-
     }
 
     protected function setupUpdateOperation()
@@ -76,7 +74,7 @@ class GnLangFileCrudController extends CrudController
                 [
                     'name' => 'format_name',
                     'type' => 'text',
-                    'label' => 'Format name',
+                    'label' => 'Format section',
                     'attributes' => [
                         'readonly'  => 'readonly',
                     ]
@@ -88,36 +86,21 @@ class GnLangFileCrudController extends CrudController
     public function destroy($id)
     {
         $this->crud->hasAccessOrFail('delete');
-        $langFile = $this->getGnLangFileById($id);
+        $section = $this->getGnSectionById($id);
 
-        if ($langFile) {
-            if (count($langFile->translations)) {
-                return \Alert::error('La archivo tiene traducciones asignadas.');
+        if ($section) {
+            if (count($section->langTranslations)) {
+                return \Alert::error('La sección tiene traducciones asignadas.');
             }
         } else {
             return \Alert::error('Ha ocurido un error.');
         }
-        
-        $this->removeLangFile($langFile->format_name);
+
         return $this->crud->delete($id);
     }
 
-    private function removeLangFile($name){
-        $folder = resource_path('lang');
-        foreach ($this->getLanguages() as $lang) {
-            $path = $folder . '/' . $lang->abbr;
-            if (!is_dir($path)) {
-                unlink($path . '/' . $name . '.php');
-            }
-        }
-    }
-
-    private function getGnLangFileById($id){
-        return GnLangFile::find($id);
-    }
-
-    private function getLanguages()
+    private function getGnSectionById($id)
     {
-        return Language::where('active', 1)->orderBy('default', 'DESC')->get();
+        return LangSection::find($id);
     }
 }

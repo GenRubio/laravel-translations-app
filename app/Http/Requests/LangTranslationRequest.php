@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use App\Http\Requests\Request;
 use Illuminate\Foundation\Http\FormRequest;
 
-class GnLangFileRequest extends FormRequest
+class LangTranslationRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,7 +26,8 @@ class GnLangFileRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => ['required', 'unique:lang_files,name', 'max:50']
+            'name' => ['required', 'max:50'],
+            'lang_file_id' => ['required']
         ];
     }
 

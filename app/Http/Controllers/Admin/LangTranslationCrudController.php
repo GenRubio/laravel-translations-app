@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Language;
-use App\Models\GnSection;
-use App\Models\GnLangFile;
+use App\Models\LangSection;
+use App\Models\LangFile;
 use Illuminate\Http\Request;
-use App\Models\GnTranslation;
-use App\Http\Requests\GnTranslationRequest;
+use App\Models\LangTranslation;
+use App\Http\Requests\LangTranslationRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
-class GnTranslationCrudController extends CrudController
+class LangTranslationCrudController extends CrudController
 {
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation {
@@ -30,19 +30,19 @@ class GnTranslationCrudController extends CrudController
 
     public function setup()
     {
-        CRUD::setModel(\App\Models\GnTranslation::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/gn-translation');
+        CRUD::setModel(\App\Models\LangTranslation::class);
+        CRUD::setRoute(config('backpack.base.route_prefix') . '/lang-translation');
         CRUD::setEntityNameStrings('lang text', 'lang texts');
     }
 
-    public function fetchGnLangFile()
+    public function fetchLangFile()
     {
-        return $this->fetch(\App\Models\GnLangFile::class);
+        return $this->fetch(\App\Models\LangFile::class);
     }
 
-    public function fetchGnSection()
+    public function fetchLangSection()
     {
-        return $this->fetch(\App\Models\GnSection::class);
+        return $this->fetch(\App\Models\LangSection::class);
     }
 
     protected function setupListOperation()
@@ -86,13 +86,13 @@ class GnTranslationCrudController extends CrudController
                     'label' => 'Texto'
                 ],
                 [
-                    'name' => 'file',
+                    'name' => 'langFile',
                     'type' => 'relationship',
                     'label' => 'Lang File',
                     'attribute' => 'format_name',
                 ],
                 [
-                    'name' => 'section',
+                    'name' => 'langSection',
                     'type' => 'relationship',
                     'label' => 'Lang Section',
                     'attribute' => 'format_name',
@@ -155,7 +155,7 @@ class GnTranslationCrudController extends CrudController
 
     protected function setupCreateOperation()
     {
-        CRUD::setValidation(GnTranslationRequest::class);
+        CRUD::setValidation(LangTranslationRequest::class);
 
         $this->crud->addFields(
             [
@@ -172,7 +172,7 @@ class GnTranslationCrudController extends CrudController
                     'label' => "Lang File",
                     'type' => "relationship",
                     'name' => 'lang_file_id',
-                    'entity' => 'gnLangFile',
+                    'entity' => 'langFile',
                     'attribute' => 'name',
                     'ajax' => true,
                     'inline_create' => true,
@@ -182,7 +182,7 @@ class GnTranslationCrudController extends CrudController
                     'label'     => "Lang Section",
                     'type' => "relationship",
                     'name' => 'lang_section_id',
-                    'entity' => 'gnSection',
+                    'entity' => 'langSection',
                     'attribute' => 'name',
                     'ajax' => true,
                     'inline_create' => true,
@@ -438,14 +438,14 @@ class GnTranslationCrudController extends CrudController
     }
 
     private function updateValueFromGnTranslation($id, $languages){
-        GnTranslation::where('id', $id)->update([
+        LangTranslation::where('id', $id)->update([
             'value' => $languages
         ]);
     }
 
     private function getTranslationByParameters($key, $langFile, $section)
     {
-        return GnTranslation::where('name', $key)
+        return LangTranslation::where('name', $key)
             ->where('lang_file_id', $langFile)
             ->where('lang_section_id', $section)
             ->first();
@@ -453,31 +453,31 @@ class GnTranslationCrudController extends CrudController
 
     private function getAllLangFiles()
     {
-        return GnLangFile::all();
+        return LangFile::all();
     }
 
     private function getAllSections()
     {
-        return GnSection::all();
+        return LangSection::all();
     }
 
     private function getTranslationById($id){
-        return GnTranslation::find($id);
+        return LangTranslation::find($id);
     }
 
     private function getLaguageFileTexts($languagesFile)
     {
-        return GnTranslation::where('lang_file_id', $languagesFile->id)->get();
+        return LangTranslation::where('lang_file_id', $languagesFile->id)->get();
     }
 
     private function getFileTextsSectionsIds($languagesFile)
     {
-        return GnTranslation::where('lang_file_id', $languagesFile->id)->pluck('lang_section_id')->toArray();
+        return LangTranslation::where('lang_file_id', $languagesFile->id)->pluck('lang_section_id')->toArray();
     }
 
     private function getSectionsByIds($ids)
     {
-        return GnSection::whereIn('id', $ids)->get();
+        return LangSection::whereIn('id', $ids)->get();
     }
 
     private function getLanguages()

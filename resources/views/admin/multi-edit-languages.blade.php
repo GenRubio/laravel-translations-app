@@ -84,7 +84,7 @@ $breadcrumbs = $breadcrumbs ?? $defaultBreadcrumbs;
                 app()->setLocale($lang);
             @endphp
             <div class="p-3" style="background-color: white">
-                <form action="{{ backpack_url('gn-translation/update-texts') }}" method="POST">
+                <form action="{{ backpack_url('lang-translation/update-texts') }}" method="POST">
                     {{ csrf_field() }}
                     <input type="hidden" name="lang" value="{{ $lang }}">
                     <div class="row">
@@ -97,7 +97,7 @@ $breadcrumbs = $breadcrumbs ?? $defaultBreadcrumbs;
                         <div class="col-lg-5 mb-3">
                             <h5>Traduccion</h5>
                         </div>
-                        @foreach ($langFileSelected->translations as $translation)
+                        @foreach ($langFileSelected->langTranslations as $translation)
                             <div class="col-lg-2">
                                 {{ $translation->format_name }}
                             </div>
@@ -117,7 +117,7 @@ $breadcrumbs = $breadcrumbs ?? $defaultBreadcrumbs;
                         <i class="fa fa-save"></i> Guardar cambios
                     </button>
                     <a href="javascript:void(0)" onclick="deleteEntry(this)"
-                        data-route="{{ backpack_url('gn-translation') }}" class="btn btn-secondary ladda-button"
+                        data-route="{{ backpack_url('lang-translation') }}" class="btn btn-secondary ladda-button"
                         data-button-type="delete">
                         <i class="fa fa-times"></i> Salir sin guardar
                     </a>

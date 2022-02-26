@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class GnLangFile extends Model
+class LangFile extends Model
 {
     use CrudTrait;
     use SoftDeletes;
@@ -41,8 +41,8 @@ class GnLangFile extends Model
     |--------------------------------------------------------------------------
     */
 
-    public function translations(){
-        return $this->hasMany(GnTranslation::class, 'lang_file_id', 'id');
+    public function langTranslations(){
+        return $this->hasMany(LangTranslation::class, 'lang_file_id', 'id');
     }
 
     /*
