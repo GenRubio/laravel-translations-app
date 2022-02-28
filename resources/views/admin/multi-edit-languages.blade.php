@@ -31,12 +31,14 @@ $breadcrumbs = $breadcrumbs ?? $defaultBreadcrumbs;
                 <div class="col-md-3">
                     <div class="form-group">
                         <label for="selected-laguage">IDIOMA</label>
-                        <select class="form-control" id="selected-laguage" data-route="{{ url($crud->route . '/texts') }}" data-file="{{ $file }}">
+                        <select class="form-control" id="selected-laguage"
+                            data-route="{{ url($crud->route . '/texts') }}" data-file="{{ $file }}">
                             @foreach ($laguages as $laguage)
                                 @if ($laguage->abbr == $lang)
-                                    <option value="{{  $laguage->abbr }}" selected="selected">{{  $laguage->name }}</option>
+                                    <option value="{{ $laguage->abbr }}" selected="selected">{{ $laguage->name }}
+                                    </option>
                                 @else
-                                    <option value="{{  $laguage->abbr }}">{{  $laguage->name }}</option>
+                                    <option value="{{ $laguage->abbr }}">{{ $laguage->name }}</option>
                                 @endif
                             @endforeach
                         </select>
@@ -79,37 +81,90 @@ $breadcrumbs = $breadcrumbs ?? $defaultBreadcrumbs;
                     @endforeach
                 @endif
             </ul>
-            @php
-                $oldLocale = app()->getLocale();
-                app()->setLocale($lang);
-            @endphp
             <div class="p-3" style="background-color: white">
                 <form action="{{ backpack_url('lang-translation/update-texts') }}" method="POST">
                     {{ csrf_field() }}
+                    @php
+                        $langTranslationsWithOutSection = $langFileSelected
+                            ->langTranslations()
+                            ->where('lang_section_id', null)
+                            ->get();
+                        $langTranslationsWithSectionIds = $langFileSelected
+                            ->langTranslations()
+                            ->where('lang_section_id', '!=', null)
+                            ->pluck('lang_section_id')
+                            ->toArray();
+                        $langTranslationsIdsWithSection = $langFileSelected
+                            ->langTranslations()
+                            ->where('lang_section_id', '!=', null)
+                            ->pluck('id')
+                            ->toArray();
+                        $langSections = \App\Models\LangSection::whereIn('id', $langTranslationsWithSectionIds)->get();
+                        foreach ($langSections as $langSection) {
+                            $langSection->setTranslations = \App\Models\LangTranslation::where('lang_section_id', $langSection->id)
+                                ->whereIn('id', $langTranslationsIdsWithSection)
+                                ->get();
+                        }
+                    @endphp
                     <input type="hidden" name="lang" value="{{ $lang }}">
                     <div class="row">
                         <div class="col-lg-2 mb-3">
-                            <h5>Key</h5>
+                            <h4>Key</h4>
                         </div>
                         <div class="col-lg-5 mb-3">
-                            <h5>Texto</h5>
+                            <h4>Texto</h4>
                         </div>
                         <div class="col-lg-5 mb-3">
-                            <h5>Traduccion</h5>
+                            <h4>Traduccion</h4>
                         </div>
-                        @foreach ($langFileSelected->langTranslations as $translation)
+                        @foreach ($langTranslationsWithOutSection as $translation)
                             <div class="col-lg-2">
                                 {{ $translation->format_name }}
                             </div>
                             <div class="col-lg-5">
-                                {{ $translation->name }}
+                                {{ $translation->value }}
                             </div>
                             <div class="col-lg-5">
+                                @php
+                                    $oldLocale = app()->getLocale();
+                                    app()->setLocale($lang);
+                                @endphp
                                 <div class="form-group">
                                     <textarea class="form-control" name="translations[{{ $translation->id }}]"
                                         rows="2"> {{ $translation->value }}</textarea>
                                 </div>
+                                @php
+                                    app()->setLocale($oldLocale);
+                                @endphp
                             </div>
+                        @endforeach
+                        @foreach ($langSections as $langSection)
+                            <div class="col-lg-2 mb-3">
+                                <h5>{{ $langSection->name }}</h5>
+                            </div>
+                            <div class="col-lg-5 mb-3"></div>
+                            <div class="col-lg-5 mb-3"></div>
+                            @foreach ($langSection->setTranslations as $translation)
+                                <div class="col-lg-2">
+                                    {{ $translation->format_name }}
+                                </div>
+                                <div class="col-lg-5">
+                                    {{ $translation->value }}
+                                </div>
+                                <div class="col-lg-5">
+                                    @php
+                                        $oldLocale = app()->getLocale();
+                                        app()->setLocale($lang);
+                                    @endphp
+                                    <div class="form-group">
+                                        <textarea class="form-control" name="translations[{{ $translation->id }}]"
+                                            rows="2"> {{ $translation->value }}</textarea>
+                                    </div>
+                                    @php
+                                        app()->setLocale($oldLocale);
+                                    @endphp
+                                </div>
+                            @endforeach
                         @endforeach
                     </div>
                     <hr>
@@ -123,9 +178,6 @@ $breadcrumbs = $breadcrumbs ?? $defaultBreadcrumbs;
                     </a>
                 </form>
             </div>
-            @php
-                app()->setLocale($oldLocale);
-            @endphp
         </div>
     </div>
 @endsection

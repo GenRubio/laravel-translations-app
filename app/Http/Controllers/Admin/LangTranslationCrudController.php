@@ -319,7 +319,7 @@ class LangTranslationCrudController extends CrudController
         $entries = request()->input('entries', []);
         $deletedEntries = [];
 
-        foreach ($entries as $key => $id) {
+        foreach ($entries as $id) {
             if ($entry = $this->crud->model->find($id)) {
                 $deletedEntries[] = $entry->delete();
             }

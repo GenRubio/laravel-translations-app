@@ -2,12 +2,13 @@
 
 return [
 
-  'title' => 'hello',
+  'title' => 'hola',
   'modal' => [
-   'title' => 'titulo modal 234',
+   'title' => 'title modal',
+   'subtitle' => 'subtitulo modal',
   ],
   'section_modal' => [
-   'subtitle' => 'ahmed',
+   'subtitle' => 'asfsf',
   ],
 
 ];
