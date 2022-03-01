@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Model;
+use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class GnLangFile extends Model
+class LangSection extends Model
 {
     use CrudTrait;
     use SoftDeletes;
@@ -18,7 +18,7 @@ class GnLangFile extends Model
     |--------------------------------------------------------------------------
     */
 
-    protected $table = 'gn_lang_files';
+    protected $table = 'lang_sections';
     // protected $primaryKey = 'id';
     // public $timestamps = false;
     protected $guarded = ['id'];
@@ -41,8 +41,8 @@ class GnLangFile extends Model
     |--------------------------------------------------------------------------
     */
 
-    public function translations(){
-        return $this->hasMany(GnTranslation::class, 'gn_lang_file_id', 'id');
+    public function langTranslations(){
+        return $this->hasMany(LangTranslation::class, 'lang_section_id', 'id');
     }
 
     /*

@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use App\Http\Requests\Request;
 use Illuminate\Foundation\Http\FormRequest;
 
-class GnSectionRequest extends FormRequest
+class LangTranslationRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,7 +26,8 @@ class GnSectionRequest extends FormRequest
     public function rules()
     {
         return [
-             'section' => ['required', 'unique:gn_sections,section', 'max:50']
+            'name' => ['required', 'max:50'],
+            'lang_file_id' => ['required']
         ];
     }
 

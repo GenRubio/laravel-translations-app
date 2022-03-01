@@ -2,9 +2,14 @@
 
 return [
 
-  'hello_word' => 'asdf',
+  'title' => 'hola',
+  'subtitulo' => 'sdadg',
   'modal' => [
-   'title' => 'potato xd',
+   'title' => 'title modal',
+   'subtitle' => 'subtitulo modal',
+  ],
+  'section_modal' => [
+   'subtitle' => 'asfsf',
   ],
 
 ];

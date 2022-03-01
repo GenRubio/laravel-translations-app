@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateGnSectionsTable extends Migration
+class CreateLangSectionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,10 @@ class CreateGnSectionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('gn_sections', function (Blueprint $table) {
+        Schema::create('lang_sections', function (Blueprint $table) {
             $table->id();
-            $table->string('section')->unique();
-            $table->string('format_section');
+            $table->string('name')->unique();
+            $table->string('format_name');
             $table->softDeletes();
             $table->timestamps();
         });
@@ -29,6 +29,6 @@ class CreateGnSectionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('gn_sections');
+        Schema::dropIfExists('lang_sections');
     }
 }

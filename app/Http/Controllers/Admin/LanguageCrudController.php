@@ -24,7 +24,7 @@ class LanguageCrudController extends CrudController
     {
         $this->crud->setModel(\App\Models\Language::class);
         $this->crud->setRoute(config('backpack.base.route_prefix', 'admin') . '/language');
-        $this->crud->setEntityNameStrings('idiomas', 'idiomas');
+        $this->crud->setEntityNameStrings(trans('translationsystem.laguage'), trans('translationsystem.languages'));
     }
 
     public function setupListOperation()
@@ -32,16 +32,16 @@ class LanguageCrudController extends CrudController
         $this->crud->setColumns([
             [
                 'name' => 'name',
-                'label' => 'Nombre idioma',
+                'label' => trans('translationsystem.form.laguage_name'),
             ],
             [
                 'name' => 'active',
-                'label' => 'Activo',
+                'label' => trans('translationsystem.form.language_active'),
                 'type' => 'boolean',
             ],
             [
                 'name' => 'default',
-                'label' => 'Predeterminado',
+                'label' => trans('translationsystem.form.laguage_default'),
                 'type' => 'boolean',
             ],
         ]);
@@ -52,32 +52,32 @@ class LanguageCrudController extends CrudController
         $this->crud->setValidation(LanguageRequest::class);
         $this->crud->addField([
             'name' => 'name',
-            'label' => 'Nombre idioma',
+            'label' => trans('translationsystem.form.laguage_name'),
             'type' => 'text',
         ]);
         $this->crud->addField([
             'name' => 'native',
-            'label' => 'Nombre nativo',
+            'label' => trans('translationsystem.form.laguage_native_name'),
             'type' => 'text',
         ]);
         $this->crud->addField([
             'name' => 'abbr',
-            'label' => 'Code (ISO 639-1)',
+            'label' => trans('translationsystem.form.laguage_abbr'),
             'type' => 'text',
         ]);
         $this->crud->addField([
             'name' => 'flag',
-            'label' => 'Imagen Bandera',
+            'label' => trans('translationsystem.form.laguage_flag'),
             'type' => 'browse',
         ]);
         $this->crud->addField([
             'name' => 'active',
-            'label' => 'Activo',
+            'label' => trans('translationsystem.form.language_active'),
             'type' => 'checkbox',
         ]);
         $this->crud->addField([
             'name' => 'default',
-            'label' => 'Predeterminado',
+            'label' => trans('translationsystem.form.laguage_default'),
             'type' => 'checkbox',
         ]);
     }

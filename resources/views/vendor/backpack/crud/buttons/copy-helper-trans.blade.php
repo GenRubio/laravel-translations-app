@@ -1,6 +1,6 @@
 <button class="btn btn-sm btn-link" data-helper="{{ $entry->helper }}"
     id="copy-to-clipboard-{{ $entry->getKey() }}">
-    <i class="lar la-copy"></i> Copy Helper
+    <i class="lar la-copy"></i> {{ trans('translationsystem.copy_helper') }}
 </button>
 
 <script>

@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\GnSectionRequest;
-use App\Models\GnSection;
+use App\Http\Requests\LangSectionRequest;
+use App\Models\LangSection;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
-class GnSectionCrudController extends CrudController
+class LangSectionCrudController extends CrudController
 {
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
@@ -19,24 +19,25 @@ class GnSectionCrudController extends CrudController
 
     public function setup()
     {
-        CRUD::setModel(\App\Models\GnSection::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/gn-section');
-        CRUD::setEntityNameStrings('section', 'sections');
+        CRUD::setModel(\App\Models\LangSection::class);
+        CRUD::setRoute(config('backpack.base.route_prefix', 'admin') . '/lang-section');
+        CRUD::setEntityNameStrings(trans('translationsystem.lang_section'), trans('translationsystem.lang_sections'));
     }
 
     protected function setupListOperation()
     {
+        $this->crud->removeButton('update');
         $this->crud->setColumns(
             [
                 [
-                    'name' => 'format_section',
+                    'name' => 'name',
                     'type' => 'text',
-                    'label' => 'Format section'
+                    'label' => trans('translationsystem.form.section_name')
                 ],
                 [
-                    'name' => 'section',
+                    'name' => 'format_name',
                     'type' => 'text',
-                    'label' => 'Section name'
+                    'label' => trans('translationsystem.form.format_section')
                 ]
             ]
         );
@@ -50,17 +51,17 @@ class GnSectionCrudController extends CrudController
 
     protected function setupCreateOperation()
     {
-        CRUD::setValidation(GnSectionRequest::class);
+        CRUD::setValidation(LangSectionRequest::class);
 
         $this->crud->addFields(
             [
                 [
-                    'name' => 'section',
+                    'name' => 'name',
                     'type' => 'text',
-                    'label' => 'Section <br> <small>Auto format: input = Hello Word | result = hello_word</small>'
+                    'label' => trans('translationsystem.form.section_name_subtitle')
                 ],
                 [
-                    'name' => 'format_section',
+                    'name' => 'format_name',
                     'type' => 'hidden',
                 ]
             ]
@@ -72,9 +73,9 @@ class GnSectionCrudController extends CrudController
         $this->crud->addFields(
             [
                 [
-                    'name' => 'format_section',
+                    'name' => 'format_name',
                     'type' => 'text',
-                    'label' => 'Format section',
+                    'label' => trans('translationsystem.form.format_section'),
                     'attributes' => [
                         'readonly'  => 'readonly',
                     ]
@@ -89,11 +90,11 @@ class GnSectionCrudController extends CrudController
         $section = $this->getGnSectionById($id);
 
         if ($section) {
-            if (count($section->translations)) {
-                return \Alert::error('La sección tiene traducciones asignadas.');
+            if (count($section->langTranslations)) {
+                return \Alert::error(trans('translationsystem.errors.3'));
             }
         } else {
-            return \Alert::error('Ha ocurido un error.');
+            return \Alert::error(trans('translationsystem.errors.2'));
         }
 
         return $this->crud->delete($id);
@@ -101,6 +102,6 @@ class GnSectionCrudController extends CrudController
 
     private function getGnSectionById($id)
     {
-        return GnSection::find($id);
+        return LangSection::find($id);
     }
 }

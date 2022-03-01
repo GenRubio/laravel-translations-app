@@ -2,15 +2,17 @@
 
 namespace App\Models;
 
-use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Model;
+use Backpack\CRUD\app\Models\Traits\CrudTrait;
+use Backpack\CRUD\app\Models\Traits\SpatieTranslatable\HasTranslations;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class GnSection extends Model
+class LangTranslation extends Model
 {
     use CrudTrait;
     use SoftDeletes;
+    use HasTranslations;
 
     /*
     |--------------------------------------------------------------------------
@@ -18,16 +20,23 @@ class GnSection extends Model
     |--------------------------------------------------------------------------
     */
 
-    protected $table = 'gn_sections';
+    protected $table = 'lang_translations';
     protected $primaryKey = 'id';
     // public $timestamps = false;
     protected $guarded = ['id'];
     protected $fillable = [
-        'section',
-        'format_section'
+        'name',
+        'format_name',
+        'value',
+        'lang_section_id',
+        'lang_file_id'
     ];
     // protected $hidden = [];
     // protected $dates = [];
+
+    protected $translatable = [
+        'value'
+    ];
 
     /*
     |--------------------------------------------------------------------------
@@ -41,9 +50,14 @@ class GnSection extends Model
     |--------------------------------------------------------------------------
     */
 
-    public function translations(){
-        return $this->hasMany(GnTranslation::class, 'gn_section_id', 'id');
+    public function langSection(){
+        return $this->hasOne(LangSection::class, 'id', 'lang_section_id');
     }
+
+    public function langFile(){
+        return $this->hasOne(LangFile::class, 'id', 'lang_file_id');
+    }
+
 
     /*
     |--------------------------------------------------------------------------
@@ -57,14 +71,19 @@ class GnSection extends Model
     |--------------------------------------------------------------------------
     */
 
+    public function getHelperAttribute(){
+        $route = ($this->langFile ? $this->langFile->format_name . '.' : "") . ($this->langSection ? $this->langSection->format_name . '.' : "") . $this->attributes['format_name'];
+        return "trans('" . $route . "')";
+    }
+
     /*
     |--------------------------------------------------------------------------
     | MUTATORS
     |--------------------------------------------------------------------------
     */
 
-    public function setFormatSectionAttribute()
+    public function setFormatNameAttribute()
     {
-        $this->attributes['format_section'] = Str::slug($this->attributes['section'], '_');
+        $this->attributes['format_name'] = Str::slug($this->attributes['name'], '_');
     }
 }
