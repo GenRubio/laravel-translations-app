@@ -14,7 +14,7 @@ $breadcrumbs = $breadcrumbs ?? $defaultBreadcrumbs;
 @section('header')
     <div class="container-fluid">
         <h2>
-            <span class="text-capitalize">Traducir textos del sitio.</span>
+            <span class="text-capitalize">{{ trans('translationsystem.multi_edit_laguages.title') }}</span>
         </h2>
     </div>
 @endsection
@@ -30,7 +30,7 @@ $breadcrumbs = $breadcrumbs ?? $defaultBreadcrumbs;
             <div class="row">
                 <div class="col-md-3">
                     <div class="form-group">
-                        <label for="selected-laguage">IDIOMA</label>
+                        <label for="selected-laguage">{{ trans('translationsystem.multi_edit_laguages.language') }}</label>
                         <select class="form-control" id="selected-laguage"
                             data-route="{{ url($crud->route . '/texts') }}" data-file="{{ $file }}">
                             @foreach ($laguages as $laguage)
@@ -109,13 +109,13 @@ $breadcrumbs = $breadcrumbs ?? $defaultBreadcrumbs;
                     <input type="hidden" name="lang" value="{{ $lang }}">
                     <div class="row">
                         <div class="col-lg-2 mb-3">
-                            <h4>Key</h4>
+                            <h4>{{ trans('translationsystem.multi_edit_laguages.key') }}</h4>
                         </div>
                         <div class="col-lg-5 mb-3">
-                            <h4>Texto</h4>
+                            <h4>{{ trans('translationsystem.multi_edit_laguages.text') }}</h4>
                         </div>
                         <div class="col-lg-5 mb-3">
-                            <h4>Traduccion</h4>
+                            <h4>{{ trans('translationsystem.multi_edit_laguages.translation') }}</h4>
                         </div>
                         @foreach ($langTranslationsWithOutSection as $translation)
                             <div class="col-lg-2">
@@ -169,12 +169,12 @@ $breadcrumbs = $breadcrumbs ?? $defaultBreadcrumbs;
                     </div>
                     <hr>
                     <button class="btn btn-primary ladda-button" type="submit">
-                        <i class="fa fa-save"></i> Guardar cambios
+                        <i class="fa fa-save"></i> {{ trans('translationsystem.multi_edit_laguages.save_changes') }}
                     </button>
                     <a href="javascript:void(0)" onclick="deleteEntry(this)"
                         data-route="{{ backpack_url('lang-translation') }}" class="btn btn-secondary ladda-button"
                         data-button-type="delete">
-                        <i class="fa fa-times"></i> Salir sin guardar
+                        <i class="fa fa-times"></i> {{ trans('translationsystem.multi_edit_laguages.out_not_save') }}
                     </a>
                 </form>
             </div>

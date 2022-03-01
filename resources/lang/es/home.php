@@ -3,6 +3,7 @@
 return [
 
   'title' => 'hola',
+  'subtitulo' => 'sdadg',
   'modal' => [
    'title' => 'title modal',
    'subtitle' => 'subtitulo modal',

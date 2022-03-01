@@ -31,8 +31,8 @@ class LangTranslationCrudController extends CrudController
     public function setup()
     {
         CRUD::setModel(\App\Models\LangTranslation::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/lang-translation');
-        CRUD::setEntityNameStrings('lang text', 'lang texts');
+        CRUD::setRoute(config('backpack.base.route_prefix', 'admin') . '/lang-translation');
+        CRUD::setEntityNameStrings(trans('translationsystem.lang_text'), trans('translationsystem.lang_texts'));
     }
 
     public function fetchLangFile()
@@ -78,29 +78,29 @@ class LangTranslationCrudController extends CrudController
                 [
                     'name' => 'helper',
                     'type' => 'text',
-                    'label' => 'Helper'
+                    'label' => trans('translationsystem.form.lang_text_helper')
                 ],
                 [
                     'name' => 'value',
                     'type' => 'text',
-                    'label' => 'Texto'
+                    'label' => trans('translationsystem.form.lang_text_text')
                 ],
                 [
                     'name' => 'langFile',
                     'type' => 'relationship',
-                    'label' => 'Lang File',
+                    'label' => trans('translationsystem.form.lang_text_lang_file'),
                     'attribute' => 'format_name',
                 ],
                 [
                     'name' => 'langSection',
                     'type' => 'relationship',
-                    'label' => 'Lang Section',
+                    'label' => trans('translationsystem.form.lang_text_lang_section'),
                     'attribute' => 'format_name',
                 ],
                 [
                     'name' => 'format_name',
                     'type' => 'text',
-                    'label' => 'Format name'
+                    'label' => trans('translationsystem.form.format_name')
                 ]
             ]
         );
@@ -127,7 +127,7 @@ class LangTranslationCrudController extends CrudController
         $this->crud->addFilter([
             'name' => 'lang_file_id',
             'type' => 'select2',
-            'label' => 'Lang File',
+            'label' => trans('translationsystem.form.lang_text_lang_file'),
         ], function () {
             $data = [];
             foreach ($this->getAllLangFiles() as $file) {
@@ -139,9 +139,9 @@ class LangTranslationCrudController extends CrudController
         });
 
         $this->crud->addFilter([
-            'name' => 'lsng_section_id',
+            'name' => 'lang_section_id',
             'type' => 'select2',
-            'label' => 'Lang Section',
+            'label' => trans('translationsystem.form.lang_text_lang_section'),
         ], function () {
             $data = [];
             foreach ($this->getAllSections() as $section) {
@@ -162,14 +162,14 @@ class LangTranslationCrudController extends CrudController
                 [
                     'name' => 'name',
                     'type' => 'text',
-                    'label' => 'Name <br> <small>Auto format: input = Hello Word | result = hello_word</small>'
+                    'label' => trans('translationsystem.form.lang_text_subtitle')
                 ],
                 [
                     'name' => 'format_name',
                     'type' => 'hidden',
                 ],
                 [
-                    'label' => "Lang File",
+                    'label' => trans('translationsystem.form.lang_text_lang_file'),
                     'type' => "relationship",
                     'name' => 'lang_file_id',
                     'entity' => 'langFile',
@@ -179,7 +179,7 @@ class LangTranslationCrudController extends CrudController
                     'minimum_input_length' => 0,
                 ],
                 [
-                    'label'     => "Lang Section",
+                    'label'     => trans('translationsystem.form.lang_text_lang_section'),
                     'type' => "relationship",
                     'name' => 'lang_section_id',
                     'entity' => 'langSection',
@@ -197,7 +197,7 @@ class LangTranslationCrudController extends CrudController
                     [
                         'name' => 'laguages[' . $lang->abbr . ']',
                         'type' => 'textarea',
-                        'label' => 'Lang (' . $lang->name . ')'
+                        'label' => trans('translationsystem.lang') . ' (' . $lang->name . ')'
                     ]
                 ]
             );
@@ -220,7 +220,7 @@ class LangTranslationCrudController extends CrudController
                 [
                     'name' => 'format_name',
                     'type' => 'text',
-                    'label' => 'Format Name',
+                    'label' => trans('translationsystem.form.format_name'),
                     'attributes' => [
                         'readonly'  => 'readonly',
                     ],
@@ -228,7 +228,7 @@ class LangTranslationCrudController extends CrudController
                 [
                     'name' => 'helper',
                     'type' => 'text',
-                    'label' => 'Helper',
+                    'label' => trans('translationsystem.form.lang_text_helper'),
                     'attributes' => [
                         'readonly'  => 'readonly',
                     ],
@@ -236,7 +236,7 @@ class LangTranslationCrudController extends CrudController
                 [
                     'name' => 'value',
                     'type' => 'textarea',
-                    'label' => 'Value',
+                    'label' => trans('translationsystem.form.value'),
                     'attributes' => [
                         'required'  => 'required',
                     ],
@@ -248,10 +248,10 @@ class LangTranslationCrudController extends CrudController
     public function store()
     {
         if ($this->keyInUse()) {
-            return redirect()->back()->withErrors(['error' => "Esta key ya esta en uso."]);
+            return redirect()->back()->withErrors(['error' => trans('translationsystem.errors.4')]);
         } else {
             if (!$this->validateLaguagesInputs()){
-                return redirect()->back()->withErrors(['error' => "Debes rellenar al manos 1 campo de lenguaje."]);
+                return redirect()->back()->withErrors(['error' => trans('translationsystem.errors.5')]);
             }
 
             $languages = $this->prepareDataLaguages($this->crud->getRequest()->get('laguages'));
@@ -291,7 +291,7 @@ class LangTranslationCrudController extends CrudController
 
     private function keyInUse()
     {
-        $key = $this->crud->getRequest()->get('key');
+        $key = $this->crud->getRequest()->get('name');
         $langFile = $this->crud->getRequest()->get('lang_file_id');
         $section = $this->crud->getRequest()->get('lang_section_id');
         return $this->getTranslationByParameters($key, $langFile, $section) ? true : false;
@@ -350,14 +350,14 @@ class LangTranslationCrudController extends CrudController
         }
         app()->setLocale($oldLocale);
         $this->makeLaguagesDirectories();
-        \Alert::add('success', 'Traducciones actualizadas correctamente.')->flash();
+        \Alert::add('success', trans('translationsystem.success.1'))->flash();
         return redirect()->back();
     }
 
     public function makeTransletableFile()
     {
         $this->makeLaguagesDirectories();
-        \Alert::add('success', 'El archivo de traducción se ha actualizado correctamente.')->flash();
+        \Alert::add('success', trans('translationsystem.success.1'))->flash();
         return redirect()->back();
     }
 

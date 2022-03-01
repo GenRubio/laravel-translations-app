@@ -20,23 +20,24 @@ class LangSectionCrudController extends CrudController
     public function setup()
     {
         CRUD::setModel(\App\Models\LangSection::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/lang-section');
-        CRUD::setEntityNameStrings('lang section', 'lang sections');
+        CRUD::setRoute(config('backpack.base.route_prefix', 'admin') . '/lang-section');
+        CRUD::setEntityNameStrings(trans('translationsystem.lang_section'), trans('translationsystem.lang_sections'));
     }
 
     protected function setupListOperation()
     {
+        $this->crud->removeButton('update');
         $this->crud->setColumns(
             [
                 [
-                    'name' => 'format_name',
-                    'type' => 'text',
-                    'label' => 'Format section'
-                ],
-                [
                     'name' => 'name',
                     'type' => 'text',
-                    'label' => 'Section name'
+                    'label' => trans('translationsystem.form.section_name')
+                ],
+                [
+                    'name' => 'format_name',
+                    'type' => 'text',
+                    'label' => trans('translationsystem.form.format_section')
                 ]
             ]
         );
@@ -57,7 +58,7 @@ class LangSectionCrudController extends CrudController
                 [
                     'name' => 'name',
                     'type' => 'text',
-                    'label' => 'Section <br> <small>Auto format: input = Hello Word | result = hello_word</small>'
+                    'label' => trans('translationsystem.form.section_name_subtitle')
                 ],
                 [
                     'name' => 'format_name',
@@ -74,7 +75,7 @@ class LangSectionCrudController extends CrudController
                 [
                     'name' => 'format_name',
                     'type' => 'text',
-                    'label' => 'Format section',
+                    'label' => trans('translationsystem.form.format_section'),
                     'attributes' => [
                         'readonly'  => 'readonly',
                     ]
@@ -90,10 +91,10 @@ class LangSectionCrudController extends CrudController
 
         if ($section) {
             if (count($section->langTranslations)) {
-                return \Alert::error('La sección tiene traducciones asignadas.');
+                return \Alert::error(trans('translationsystem.errors.3'));
             }
         } else {
-            return \Alert::error('Ha ocurido un error.');
+            return \Alert::error(trans('translationsystem.errors.2'));
         }
 
         return $this->crud->delete($id);

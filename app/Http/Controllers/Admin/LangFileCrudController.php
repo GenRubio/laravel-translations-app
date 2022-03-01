@@ -21,23 +21,24 @@ class LangFileCrudController extends CrudController
     public function setup()
     {
         CRUD::setModel(\App\Models\LangFile::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/lang-file');
-        CRUD::setEntityNameStrings('lang file', 'lang files');
+        CRUD::setRoute(config('backpack.base.route_prefix', 'admin') . '/lang-file');
+        CRUD::setEntityNameStrings(trans('translationsystem.lang_file'), trans('translationsystem.lang_files'));
     }
 
     protected function setupListOperation()
     {
+        $this->crud->removeButton('update');
         $this->crud->setColumns(
             [
                 [
-                    'name' => 'format_name',
-                    'type' => 'text',
-                    'label' => 'Format name'
-                ],
-                [
                     'name' => 'name',
                     'type' => 'text',
-                    'label' => 'File name'
+                    'label' => trans('translationsystem.form.file_name')
+                ],
+                [
+                    'name' => 'format_name',
+                    'type' => 'text',
+                    'label' => trans('translationsystem.form.format_name')
                 ]
             ]
         );
@@ -58,7 +59,7 @@ class LangFileCrudController extends CrudController
                 [
                     'name' => 'name',
                     'type' => 'text',
-                    'label' => 'File name <br> <small>Auto format: input = Hello Word | result = hello_word</small>'
+                    'label' => trans('translationsystem.form.helper')
                 ],
                 [
                     'name' => 'format_name',
@@ -66,7 +67,6 @@ class LangFileCrudController extends CrudController
                 ]
             ]
         );
-
     }
 
     protected function setupUpdateOperation()
@@ -76,10 +76,10 @@ class LangFileCrudController extends CrudController
                 [
                     'name' => 'format_name',
                     'type' => 'text',
-                    'label' => 'Format name',
+                    'label' => trans('translationsystem.form.format_name'),
                     'attributes' => [
                         'readonly'  => 'readonly',
-                    ]
+                    ],
                 ]
             ]
         );
@@ -92,10 +92,10 @@ class LangFileCrudController extends CrudController
 
         if ($langFile) {
             if (count($langFile->langTranslations)) {
-                return \Alert::error('La archivo tiene traducciones asignadas.');
+                return \Alert::error(trans('translationsystem.errors.1'));
             }
         } else {
-            return \Alert::error('Ha ocurido un error.');
+            return \Alert::error(trans('translationsystem.errors.2'));
         }
         
         $this->removeLangFile($langFile->format_name);
