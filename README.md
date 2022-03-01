@@ -19,61 +19,79 @@ Para cada lenguaje se crea un archivo con diferente contenido basándose en la t
 
 - database/migrations
 ```sh
-2022_02_21_052106_create_gn_sections_table.php
-2022_02_21_184932_create_gn_lang_files_table.php
-2022_02_22_084746_create_gn_translations_table.php
+2022_02_21_052106_create_lang_sections_table.php
+2022_02_21_184932_create_lang_files_table.php
+2022_02_22_084746_create_lang_translations_table.php
+2022_02_22_190535_create_languages_table.php
 ```
 
 - app/Http/Controllers/Admin
 ```sh
-GnLangFileCrudController.php
-GnSectionCrudController.php
-GnTranslationCrudController.php
+LangFileCrudController.php
+LangSectionCrudController.php
+LangTranslationCrudController.php
+LanguageCrudController.php
 ```
 
 - app/Http/Requests
 ```sh
-GnLangFileRequest.php
-GnSectionRequest.php
-GnTranslationRequest.php
+LangFileRequest.php
+LangSectionRequest.php
+LangTranslationRequest.php
+LanguageRequest.php
 ```
 
 - app/Models
 ```sh
-GnLangFile.php
-GnSection.php
-GnTranslation.php
+LangFile.php
+LangSection.php
+LangTranslation.php
+Language.php
 ```
 
 - resources/views/vendor/base/crud/buttons
 ```sh
-import-actual-lang-files.blade.php
+copy-helper-trans.blade.php
 make-transletable-file.blade.php
+translate-all-files.blade.php
 ```
 
 - resources/views/vendor/base/inc/sidebar_content.blade.php
 ```sh
 <li class="nav-item nav-dropdown">
-    <a class="nav-link nav-dropdown-toggle" href="#"><i class="las la-language"></i> Translations</a>
+    <a class="nav-link nav-dropdown-toggle" href="#"><i class="nav-icon la la-globe"></i>
+        {{ trans('translationsystem.translations_nav') }}</a>
     <ul class="nav-dropdown-items">
-        <li class='nav-item'><a class='nav-link' href='{{ backpack_url('gn-lang-file') }}'><i class="lar la-file-alt"></i> Lang Files</a></li>
-        <li class='nav-item'><a class='nav-link' href='{{ backpack_url('gn-section') }}'><i class="las la-list"></i> Lang Sections</a></li>
-        <li class='nav-item'><a class='nav-link' href='{{ backpack_url('gn-translation') }}'><i class="las la-language"></i> Lang Texts</a></li>
+        <li class='nav-item'><a class='nav-link' href='{{ backpack_url('language') }}'><i
+                    class='nav-icon la la-flag-checkered'></i> {{ trans('translationsystem.languages_nav') }}</a></li>
+        <li class='nav-item'><a class='nav-link' href='{{ backpack_url('lang-file') }}'><i
+                    class="nav-icon lar la-file-alt"></i> {{ trans('translationsystem.lang_files_nav') }}</a></li>
+        <li class='nav-item'><a class='nav-link' href='{{ backpack_url('lang-section') }}'><i
+                    class="nav-icon las la-list"></i> {{ trans('translationsystem.lang_sections_nav') }}</a></li>
+        <li class='nav-item'><a class='nav-link' href='{{ backpack_url('lang-translation') }}'><i
+                    class="nav-icon las la-language"></i> {{ trans('translationsystem.lang_texts_nav') }}</a></li>
     </ul>
 </li>
 ```
 
 - routes/backpack/custom.php
 ```sh
-Route::prefix('gn-translation')->group(function () {
-    Route::crud('/', 'GnTranslationCrudController');
-    Route::get('/make-translations-file', 'GnTranslationCrudController@makeTransletableFile');
-});
-Route::crud('gn-section', 'GnSectionCrudController');
-Route::prefix('gn-lang-file')->group(function () {
-    Route::crud('/', 'GnLangFileCrudController');
-    Route::get('/import-actual-lang-files', 'GnLangFileCrudController@importFiles');
-});
+Route::crud('lang-translation', 'LangTranslationCrudController');
+Route::crud('lang-file', 'LangFileCrudController');
+Route::crud('lang-section', 'LangSectionCrudController');
+Route::crud('language', 'LanguageCrudController');
+
+Route::get('lang-translation/texts/{lang?}/{file?}', 'LangTranslationCrudController@showTexts');
+Route::post('lang-translation/update-texts', 'LangTranslationCrudController@updateTexts');
+Route::get('lang-translation/make-translations-file', 'LangTranslationCrudController@makeTransletableFile');
+```
+
+- resources/lang
+```sh
+/ca/translationsystem.php
+/en/translationsystem.php
+/es/translationsystem.php
+/pt/translationsystem.php
 ```
 
 Una vez copiados los archivos a otro proyecto ejecutamos el comando:
