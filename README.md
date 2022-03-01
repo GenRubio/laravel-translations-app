@@ -38,6 +38,12 @@ LangTranslation.php
 Language.php
 ```
 
+- app/Observers
+```sh
+LangFileObserver.php
+LangSectionObserver.php
+```
+
 - resources/views/vendor/base/crud/buttons
 ```sh
 copy-helper-trans.blade.php
