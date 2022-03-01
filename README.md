@@ -44,6 +44,15 @@ LangFileObserver.php
 LangSectionObserver.php
 ```
 
+- app/Providers/AppServiceProvider.php
+```sh
+public function boot()
+{
+    LangFile::observe(LangFileObserver::class);
+    LangSection::observe(LangSectionObserver::class);
+}
+```
+
 - resources/views/vendor/base/crud/buttons
 ```sh
 copy-helper-trans.blade.php
