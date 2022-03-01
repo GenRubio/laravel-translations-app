@@ -2,18 +2,7 @@
 Sistema de traducciones para proyectos en Laravel con BackpackForLaravel.
 
 ## Funcionamiento 
-El sistema está compuesto por 3 modelos GnLangFile, GnSection y GnTranslation:
-
-- GnLangFile: se usa para especificar el archivo a la cual pertenece una traducción.
-- GnSection: se usa para especificar la sección a la cual pertenece una traducción.
-- GnTranslation: Contiene el identificador y el valor de la traducción.
-
-Al crear, eliminar o actualizar una GnTranslation se nos crearan las carpetas de los lenguajes que utiliza nuestra aplicación en la carpeta lang 
-del resource en el caso de que no existan.
-
-Dentro de las carpetas se creará nuestros archivos GnLangFile que se sobreescribirá al hacer cambio en algún GnTranslation.
-
-Para cada lenguaje se crea un archivo con diferente contenido basándose en la traducción del campo value de cada GnTranslation.
+---
 
 ## Archivos usados. Para migrar "Laravel translations" a otro proyecto
 
