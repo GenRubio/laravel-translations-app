@@ -45,6 +45,11 @@ make-transletable-file.blade.php
 translate-all-files.blade.php
 ```
 
+- resources/views/admin
+```sh
+multi-edit-languages.blade.php
+```
+
 - resources/views/vendor/base/inc/sidebar_content.blade.php
 ```sh
 <li class="nav-item nav-dropdown">
