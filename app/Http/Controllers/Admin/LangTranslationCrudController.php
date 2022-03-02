@@ -2,14 +2,18 @@
 
 namespace App\Http\Controllers\Admin;
 
+use Carbon\Carbon;
+use App\Models\LangFile;
 use App\Models\Language;
 use App\Models\LangSection;
-use App\Models\LangFile;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\LangTranslation;
+use App\Exports\LangAllTextsExport;
 use App\Http\Requests\LangTranslationRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use App\Exports\LangConditionTextsExport;
 
 class LangTranslationCrudController extends CrudController
 {
@@ -33,6 +37,14 @@ class LangTranslationCrudController extends CrudController
         CRUD::setModel(\App\Models\LangTranslation::class);
         CRUD::setRoute(config('backpack.base.route_prefix', 'admin') . '/lang-translation');
         CRUD::setEntityNameStrings(trans('translationsystem.lang_text'), trans('translationsystem.lang_texts'));
+        $this->setExtraDataLangTranslation();
+    }
+
+    private function setExtraDataLangTranslation()
+    {
+        $this->crud->dataLaguages = $this->getLaguagesWithOutDefaultLaguage();
+        $this->crud->dataLangSections = $this->getAllSections();
+        $this->crud->dataLangFiles = $this->getAllLangFiles();
     }
 
     public function fetchLangFile()
@@ -107,15 +119,14 @@ class LangTranslationCrudController extends CrudController
 
         $this->setFilters();
         $this->setShowNumberRows();
-        if (count($this->getLanguages())){
+        if (count($this->getLanguages())) {
             $this->crud->addButtonFromView('line', 'lang-copy-helper-trans', 'lang-copy-helper-trans', 'beginning');
             $this->crud->addButtonFromView('top', 'lang-translate-all-files', 'lang-translate-all-files', 'end');
             $this->crud->addButtonFromView('bottom', 'lang-make-transletable-file', 'lang-make-transletable-file', 'end');
 
             $this->crud->addButtonFromView('top', 'lang-export-texts', 'lang-export-texts', 'end');
             $this->crud->addButtonFromView('top', 'lang-import-texts', 'lang-import-texts', 'end');
-        }
-        else{
+        } else {
             $this->crud->removeButton('create');
         }
     }
@@ -194,7 +205,7 @@ class LangTranslationCrudController extends CrudController
             ]
         );
 
-        foreach($this->getLanguages() as $lang){
+        foreach ($this->getLanguages() as $lang) {
             $this->crud->addFields(
                 [
                     [
@@ -253,7 +264,7 @@ class LangTranslationCrudController extends CrudController
         if ($this->keyInUse()) {
             return redirect()->back()->withErrors(['error' => trans('translationsystem.errors.4')]);
         } else {
-            if (!$this->validateLaguagesInputs()){
+            if (!$this->validateLaguagesInputs()) {
                 return redirect()->back()->withErrors(['error' => trans('translationsystem.errors.5')]);
             }
 
@@ -265,26 +276,28 @@ class LangTranslationCrudController extends CrudController
         }
     }
 
-    private function prepareDataLaguages($languages){
+    private function prepareDataLaguages($languages)
+    {
         $default = "";
-        foreach($languages as $lang){
-            if ($lang && !empty($lang)){
+        foreach ($languages as $lang) {
+            if ($lang && !empty($lang)) {
                 $default = $lang;
                 break;
             }
         }
-        foreach($languages as $key => $lang){
-            if (is_null($lang) || empty($lang)){
+        foreach ($languages as $key => $lang) {
+            if (is_null($lang) || empty($lang)) {
                 $languages[$key] = $default;
             }
         }
         return json_encode($languages);
     }
 
-    private function validateLaguagesInputs(){
+    private function validateLaguagesInputs()
+    {
         $success = false;
-        foreach($this->crud->getRequest()->get('laguages') as $lang){
-            if ($lang && !empty($lang)){
+        foreach ($this->crud->getRequest()->get('laguages') as $lang) {
+            if ($lang && !empty($lang)) {
                 $success = true;
                 break;
             }
@@ -332,7 +345,8 @@ class LangTranslationCrudController extends CrudController
         return $deletedEntries;
     }
 
-    public function showTexts($lang = null, $file = null){
+    public function showTexts($lang = null, $file = null)
+    {
         return view('admin.multi-edit-languages')->with([
             'lang' => $lang ? $lang : $this->getDefaultLaguage()->abbr,
             'file' => $file,
@@ -342,10 +356,11 @@ class LangTranslationCrudController extends CrudController
         ]);
     }
 
-    public function updateTexts(Request $request){
+    public function updateTexts(Request $request)
+    {
         $oldLocale = app()->getLocale();
         app()->setLocale($request->lang);
-        foreach($request->translations as $key => $value){
+        foreach ($request->translations as $key => $value) {
             $translation = $this->getTranslationById($key);
             $translation->update([
                 'value' => $value
@@ -440,7 +455,51 @@ class LangTranslationCrudController extends CrudController
         })->all();
     }
 
-    private function updateValueFromGnTranslation($id, $languages){
+    public function exportAllTexts()
+    {
+        $data = [
+            'laguages' => $this->getLanguages(),
+            'defaultLaguage' => $this->getDefaultLaguage(),
+            'translations' => $this->getTranslationsAll()
+        ];
+        return \Excel::download((new LangAllTextsExport($data)), 'lang-texts-' . Str::slug(Carbon::now()->toDateTimeString()) . '.xlsx');
+    }
+
+    public function exportByConditions(Request $request)
+    {
+        $data = [
+            'defaultLaguage' => $this->getDefaultLaguage(),
+            'translations' => []
+        ];
+        $translations = LangTranslation::query();
+        if ($request->file != "all") {
+            $langFile = $this->getLangFileById($request->file);
+            if ($langFile) {
+                $translations->where('lang_file_id', $langFile->id);
+            }
+        }
+        if ($request->section != "all") {
+            $langSection = $this->getLangSectionById($request->section);
+            if ($langSection) {
+                $translations->where('lang_section_id', $langSection->id);
+            }
+        }
+        if ($request->laguage != "all") {
+            $language = $this->getLaguageById($request->laguage);
+            if ($language) {
+                $data['laguages'] = [$language];
+            }
+        }
+        else{
+            $data['laguages'] = $this->getLanguages();
+        }
+        $translations = $translations->get();
+        $data['translations'] = $translations;
+        return \Excel::download((new LangConditionTextsExport($data)), 'lang-texts-conditions' . Str::slug(Carbon::now()->toDateTimeString()) . '.xlsx');
+    }
+
+    private function updateValueFromGnTranslation($id, $languages)
+    {
         LangTranslation::where('id', $id)->update([
             'value' => $languages
         ]);
@@ -459,13 +518,29 @@ class LangTranslationCrudController extends CrudController
         return LangFile::all();
     }
 
+    private function getLangFileById($id)
+    {
+        return LangFile::find($id);
+    }
+
     private function getAllSections()
     {
         return LangSection::all();
     }
 
-    private function getTranslationById($id){
+    private function getLangSectionById($id)
+    {
+        return LangSection::find($id);
+    }
+
+    private function getTranslationById($id)
+    {
         return LangTranslation::find($id);
+    }
+
+    private function getTranslationsAll()
+    {
+        return LangTranslation::all();
     }
 
     private function getLaguageFileTexts($languagesFile)
@@ -483,12 +558,23 @@ class LangTranslationCrudController extends CrudController
         return LangSection::whereIn('id', $ids)->get();
     }
 
+    private function getLaguageById($id)
+    {
+        return Language::find($id);
+    }
+
     private function getLanguages()
     {
         return Language::where('active', 1)->orderBy('default', 'DESC')->get();
     }
 
-    private function getDefaultLaguage(){
+    private function getLaguagesWithOutDefaultLaguage()
+    {
+        return Language::where('active', 1)->where('default', 0)->orderBy('default', 'DESC')->get();
+    }
+
+    private function getDefaultLaguage()
+    {
         return Language::where('active', 1)->where('default', 1)->first();
     }
 }

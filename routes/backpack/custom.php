@@ -21,6 +21,8 @@ Route::group([
     Route::crud('lang-section', 'LangSectionCrudController');
     Route::crud('language', 'LanguageCrudController');
 
+    Route::get('lang-translation/export-all', 'LangTranslationCrudController@exportAllTexts');
+    Route::post('lang-translation/export-by-condition', 'LangTranslationCrudController@exportByConditions');
     Route::get('lang-translation/texts/{lang?}/{file?}', 'LangTranslationCrudController@showTexts');
     Route::post('lang-translation/update-texts', 'LangTranslationCrudController@updateTexts');
     Route::get('lang-translation/make-translations-file', 'LangTranslationCrudController@makeTransletableFile');

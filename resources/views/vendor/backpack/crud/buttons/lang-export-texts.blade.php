@@ -7,7 +7,8 @@
         </span>
     </button>
     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-        <a class="dropdown-item" href="#">{{ trans('translationsystem.export_texts.all') }}</a>
+        <a class="dropdown-item"
+            href="{{ url($crud->route . '/export-all') }}">{{ trans('translationsystem.export_texts.all') }}</a>
         <a class="dropdown-item" href="#" data-toggle="modal" data-style="zoom-in" data-backdrop="false"
             data-target="#exportByConditions">{{ trans('translationsystem.export_texts.witch_conditions') }}</a>
     </div>
@@ -19,18 +20,47 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                <h5 class="modal-title" id="exampleModalLongTitle">Exportar Excel Textos</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
-                ...
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
-            </div>
+            <form action="{{ url($crud->route . '/export-by-condition') }}" method="POST">
+                @csrf
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="exportInputFile">Archivo</label>
+                        <select name="file" class="form-control" id="exportInputFile">
+                            <option value="all">Todos archivos</option>
+                            @foreach ($crud->dataLangFiles as $file)
+                                <option value="{{ $file->id }}">{{ $file->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="exportInputSection">Seccíon</label>
+                        <select name="section" class="form-control" id="exportInputSection">
+                            <option value="all">Todas secciones</option>
+                            @foreach ($crud->dataLangSections as $section)
+                                <option value="{{ $section->id }}">{{ $section->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="exportInputLaguage">Idioma</label>
+                        <select name="laguage" class="form-control" id="exportInputLaguage">
+                            <option value="all">Todas idiomas</option>
+                            @foreach ($crud->dataLaguages as $laguage)
+                                <option value="{{ $laguage->id }}">{{ $laguage->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Exportar</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
