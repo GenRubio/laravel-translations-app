@@ -62,6 +62,17 @@ return [
         'all' => 'All',
         'witch_conditions' => 'With condition'
     ],
+    'export_texts_modal' => [
+        'title' => 'Exportar Excel Textos',
+        'file' => 'Archivo',
+        'all_files' => 'Todos archivos',
+        'section' => 'Seccíon',
+        'all_sections' => 'Todas secciones',
+        'laguage' => 'Idioma',
+        'all_languages' => 'Todas idiomas',
+        'close' => 'Cerrar',
+        'export' => 'Exportar',
+    ],
     'import_texts' => [
         'title' => 'Import texts'
     ]
