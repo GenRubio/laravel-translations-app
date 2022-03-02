@@ -57,9 +57,11 @@ public function boot()
 
 - resources/views/vendor/base/crud/buttons
 ```sh
-copy-helper-trans.blade.php
-make-transletable-file.blade.php
-translate-all-files.blade.php
+lang-copy-helper-trans.blade.php
+lang-make-transletable-file.blade.php
+lang-translate-all-files.blade.php
+lang-export-texts.blade.php
+lang-import-texts.blade.php
 ```
 
 - resources/views/admin
