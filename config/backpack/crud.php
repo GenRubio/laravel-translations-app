@@ -282,7 +282,7 @@ return [
         // "en_GB" => "English (United Kingdom)",
         // "en_US" => "English (United States)",
         // "en_ZW" => "English (Zimbabwe)",
-//        "en" => "English",
+        "en" => "English",
         // "eo" => "Esperanto",
         // "et_EE" => "Estonian (Estonia)",
         // "et" => "Estonian",
