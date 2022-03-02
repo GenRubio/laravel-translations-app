@@ -56,5 +56,13 @@ return [
         'translation' => 'Tradução',
         'save_changes' => 'Guardar mudanças',
         'out_not_save' => 'Sair sem salvar'
+    ],
+    'export_texts' => [
+        'title' => 'Exportar textos',
+        'all' => 'Todos',
+        'witch_conditions' => 'Por condiciones'
+    ],
+    'import_texts' => [
+        'title' => 'Importar textos'
     ]
 ];

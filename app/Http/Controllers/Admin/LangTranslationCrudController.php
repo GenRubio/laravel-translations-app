@@ -108,9 +108,12 @@ class LangTranslationCrudController extends CrudController
         $this->setFilters();
         $this->setShowNumberRows();
         if (count($this->getLanguages())){
-            $this->crud->addButtonFromView('line', 'copy-helper-trans', 'copy-helper-trans', 'beginning');
-            $this->crud->addButtonFromView('top', 'translate-all-files', 'translate-all-files', 'end');
-            $this->crud->addButtonFromView('bottom', 'make-transletable-file', 'make-transletable-file', 'end');
+            $this->crud->addButtonFromView('line', 'lang-copy-helper-trans', 'lang-copy-helper-trans', 'beginning');
+            $this->crud->addButtonFromView('top', 'lang-translate-all-files', 'lang-translate-all-files', 'end');
+            $this->crud->addButtonFromView('bottom', 'lang-make-transletable-file', 'lang-make-transletable-file', 'end');
+
+            $this->crud->addButtonFromView('bottom', 'lang-export-texts', 'lang-export-texts', 'end');
+            $this->crud->addButtonFromView('bottom', 'lang-import-texts', 'lang-import-texts', 'end');
         }
         else{
             $this->crud->removeButton('create');
