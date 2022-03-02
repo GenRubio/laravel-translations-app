@@ -42,6 +42,7 @@ Language.php
 ```sh
 LangFileObserver.php
 LangSectionObserver.php
+LanguageObserver.php
 ```
 
 - app/Providers/AppServiceProvider.php
@@ -50,6 +51,7 @@ public function boot()
 {
     LangFile::observe(LangFileObserver::class);
     LangSection::observe(LangSectionObserver::class);
+    Language::observe(LanguageObserver::class);
 }
 ```
 
