@@ -112,8 +112,8 @@ class LangTranslationCrudController extends CrudController
             $this->crud->addButtonFromView('top', 'lang-translate-all-files', 'lang-translate-all-files', 'end');
             $this->crud->addButtonFromView('bottom', 'lang-make-transletable-file', 'lang-make-transletable-file', 'end');
 
-            $this->crud->addButtonFromView('bottom', 'lang-export-texts', 'lang-export-texts', 'end');
-            $this->crud->addButtonFromView('bottom', 'lang-import-texts', 'lang-import-texts', 'end');
+            $this->crud->addButtonFromView('top', 'lang-export-texts', 'lang-export-texts', 'end');
+            $this->crud->addButtonFromView('top', 'lang-import-texts', 'lang-import-texts', 'end');
         }
         else{
             $this->crud->removeButton('create');
