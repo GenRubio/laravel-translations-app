@@ -45,6 +45,12 @@ LangSectionObserver.php
 LanguageObserver.php
 ```
 
+- app/Exports
+```sh
+LangAllTextsExport.php
+LangConditionTextsExport.php
+```
+
 - app/Providers/AppServiceProvider.php
 ```sh
 public function boot()
