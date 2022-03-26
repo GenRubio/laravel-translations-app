@@ -347,7 +347,7 @@ class LangTranslationCrudController extends CrudController
 
     public function showTexts($lang = null, $file = null)
     {
-        return view('admin.multi-edit-languages')->with([
+        return view('admin.languages-pack.multi-edit-languages')->with([
             'lang' => $lang ? $lang : $this->getDefaultLaguage()->abbr,
             'file' => $file,
             'langFiles' => $this->getAllLangFiles(),

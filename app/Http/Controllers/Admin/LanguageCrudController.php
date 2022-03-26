@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Language;
 use App\Http\Requests\LanguageRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
+use Illuminate\Support\Facades\Request;
 
 class LanguageCrudController extends CrudController
 {
@@ -95,6 +96,7 @@ class LanguageCrudController extends CrudController
             \File::copyDirectory(resource_path('lang/' . $defaultLang->abbr), resource_path('lang/' . request()->input('abbr')));
         }
         if (request()->input('default') == true) {
+            $this->updateDefaultLaguage();
             $this->updateConfigAppFile(request()->input('abbr'));
         }
         return $this->traitStore();
@@ -102,8 +104,19 @@ class LanguageCrudController extends CrudController
 
     public function update()
     {
+        if ($this->crud->getRequest()->default){
+            $this->updateDefaultLaguage();
+            $this->updateConfigAppFile($this->crud->getRequest()->abbr);
+        }
         $response = $this->traitUpdate();
         return $response;
+    }
+
+    private function updateDefaultLaguage()
+    {
+        Language::where('default', 1)->update([
+            'default' => 0
+        ]);
     }
 
     private function updateConfigAppFile($lang)

@@ -5,13 +5,18 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Language;
 use App\Models\LangFile;
 use App\Http\Requests\LangFileRequest;
+use App\Models\LangSection;
+use App\Models\LangTranslation;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use Illuminate\Support\Facades\Lang;
 
 class LangFileCrudController extends CrudController
 {
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
+    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation {
+        store as traitStore;
+    }
     use \Backpack\CRUD\app\Http\Controllers\Operations\InlineCreateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation {
@@ -46,7 +51,8 @@ class LangFileCrudController extends CrudController
         $this->setShowNumberRows();
     }
 
-    private function setShowNumberRows(){
+    private function setShowNumberRows()
+    {
         $this->crud->setDefaultPageLength(100);
     }
 
@@ -64,9 +70,27 @@ class LangFileCrudController extends CrudController
                 [
                     'name' => 'format_name',
                     'type' => 'hidden',
-                ]
+                ],
+                [
+                    'name'  => 'separator',
+                    'type'  => 'custom_html',
+                    'value' => '<hr>'
+                ],
             ]
         );
+        foreach ($this->getLanguages() as $lang) {
+            $this->crud->addFields(
+                [
+                    [
+                        'name' => 'php_lang[' . $lang->abbr . ']',
+                        'type'  => 'custom_html',
+                        'value' => view('admin.languages-pack.php-textarea', [
+                            'lang' => $lang
+                        ])->render()
+                    ]
+                ]
+            );
+        }
     }
 
     protected function setupUpdateOperation()
@@ -85,6 +109,64 @@ class LangFileCrudController extends CrudController
         );
     }
 
+    public function store()
+    {
+        $response = $this->traitStore();
+        $fileId = $this->data['entry']->id;
+        foreach ($this->crud->getRequest()->get('php_lang') as $lang => $content) {
+            if (!empty($content)) {
+                $this->registerPHPContent($lang, $content, $fileId);
+            }
+        }
+        (new LangTranslationCrudController())->makeTransletableFile();
+        return $response;
+    }
+
+    private function registerPHPContent($lang, $content, $fileId)
+    {
+        $section = null;
+        $oldLocale = app()->getLocale();
+        app()->setLocale($lang);
+        foreach (preg_split("/((\r?\n)|(\r\n?))/", $content) as $line) {
+            if (str_contains($line, ']')){
+                $section = null;
+            }
+            else{
+                $object = $this->formatLinePhp($line);
+                if ($object && !str_contains($object[1], '[') && $section) {
+                    $this->creatTranslationPrepareData($object, $fileId, $section->id);
+                }
+                else if ($object && !str_contains($object[1], '[') && is_null($section)) {
+                    $this->creatTranslationPrepareData($object, $fileId);
+                }
+                else if ($object && str_contains($object[1], '[')){
+                    $section = $this->firstOrCreateSection($object);
+                }
+            }
+        }
+        app()->setLocale($oldLocale);
+    }
+
+    private function creatTranslationPrepareData($object, $fileId, $langSectionId = null)
+    {
+        $objectKey = str_replace(" ", "", $object[0]);
+        $translation = $this->getTranslationByFileId($objectKey, $fileId, $langSectionId);
+        if (is_null($translation)) {
+            $this->createTranslation($object, $fileId, $langSectionId);
+        } else {
+            $translation->update([
+                'value' => substr($object[1], 1)
+            ]);
+        }
+    }
+
+    private function formatLinePhp($line)
+    {
+        $line = str_replace("'", "", $line);
+        $line = rtrim($line, ", ");
+        return !empty($line) ? explode("=>", $line) : null;
+    }
+
     public function destroy($id)
     {
         $this->crud->hasAccessOrFail('delete');
@@ -97,22 +179,58 @@ class LangFileCrudController extends CrudController
         } else {
             return \Alert::error(trans('translationsystem.errors.2'));
         }
-        
+
         $this->removeLangFile($langFile->format_name);
         return $this->crud->delete($id);
     }
 
-    private function removeLangFile($name){
+    private function removeLangFile($name)
+    {
         $folder = resource_path('lang');
         foreach ($this->getLanguages() as $lang) {
             $path = $folder . '/' . $lang->abbr;
-            if (!is_dir($path)) {
+            if (is_dir($path)) {
                 unlink($path . '/' . $name . '.php');
             }
         }
     }
 
-    private function getGnLangFileById($id){
+    private function firstOrCreateSection($object)
+    {
+        $name = str_replace(" ", "", $object[0]);
+        $section = LangSection::where('format_name', $name)->first();
+        if ($section){
+            return $section;
+        }
+        else{
+            return LangSection::create([
+                'name' => $name,
+                'format_name' => $name,
+            ]);
+        }
+    }
+
+    private function createTranslation($object, $fileId, $langSectionId)
+    {
+        LangTranslation::create([
+            'lang_file_id' => $fileId,
+            'name' => $object[0],
+            'format_name' => $object[0],
+            'lang_section_id' => $langSectionId,
+            'value' => substr($object[1], 1)
+        ]);
+    }
+
+    private function getTranslationByFileId($name, $fileId, $langSectionId)
+    {
+        return LangTranslation::where('format_name', $name)
+            ->where('lang_file_id', $fileId)
+            ->where('lang_section_id', $langSectionId)
+            ->first();
+    }
+
+    private function getGnLangFileById($id)
+    {
         return LangFile::find($id);
     }
 
