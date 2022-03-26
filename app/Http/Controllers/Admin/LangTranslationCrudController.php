@@ -97,7 +97,7 @@ class LangTranslationCrudController extends CrudController
                     'type' => 'text',
                     'label' => trans('translationsystem.form.lang_text_text')
                 ],
-                [
+                /*[
                     'name' => 'langFile',
                     'type' => 'relationship',
                     'label' => trans('translationsystem.form.lang_text_lang_file'),
@@ -113,7 +113,7 @@ class LangTranslationCrudController extends CrudController
                     'name' => 'format_name',
                     'type' => 'text',
                     'label' => trans('translationsystem.form.format_name')
-                ]
+                ]*/
             ]
         );
 

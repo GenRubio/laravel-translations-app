@@ -140,7 +140,8 @@ $breadcrumbs = $breadcrumbs ?? $defaultBreadcrumbs;
                         @endforeach
                         @foreach ($langSections as $langSection)
                             <div class="col-lg-2 mb-3">
-                                <h5>{{ $langSection->name }}</h5>
+                                <h5><b>{{ $langSection->name }}</b></h5>
+                                <hr>
                             </div>
                             <div class="col-lg-5 mb-3"></div>
                             <div class="col-lg-5 mb-3"></div>
